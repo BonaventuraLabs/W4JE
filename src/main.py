@@ -1,5 +1,6 @@
 import pygame as pg
-from settings import *
+from src.settings import *
+
 
 pg.init()
 
@@ -7,18 +8,17 @@ pg.init()
 # initialize the pygame module
 pg.init()
 
-# load and set the logo
-screen = pg.display.set_mode((240, 180))
-pg.display.set_caption("W4JE")
+# create a surface on screen
+screen = pg.display.set_mode((WIDTH, HEIGHT))
+pg.display.set_caption(TITLE)
 
-# create a surface on screen that has the size of 240 x 180
 
 # define a variable to control the main loop
 running = True
 
 # main loop
 while running:
-    # event handling, gets all event from the eventqueue
+    # event handling, gets all event from the event queue
     for event in pg.event.get():
         # only do something if the event is of type QUIT
         if event.type == pg.QUIT:
