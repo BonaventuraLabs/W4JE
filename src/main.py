@@ -1,8 +1,6 @@
 import pygame as pg
 from src.settings import *
 
-print('Hello World!')
-
 pg.init()
 
 # initialize the pygame module
