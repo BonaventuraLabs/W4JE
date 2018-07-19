@@ -1,27 +1,80 @@
 import pygame as pg
 from src.settings import *
-
-pg.init()
-
-# initialize the pygame module
-pg.init()
-
-# create a surface on screen
-screen = pg.display.set_mode((WIDTH, HEIGHT))
-pg.display.set_caption(TITLE)
+import sys
+from src.Utilities import ImageLoader
+from src.MapUtilities import Map, Camera
 
 
-# define a variable to control the main loop
-running = True
+class Game:
+    def __init__(self):
+        # init and create window
+        pg.init()
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        pg.display.set_caption(TITLE)
+        pg.key.set_repeat(1000, 100)
+        self.clock = pg.time.Clock()
+        self.images = ImageLoader(self)
+        self.unit_sprites = pg.sprite.Group()
+        self.map_sprites = pg.sprite.Group()
+        self.all_sprites = pg.sprite.Group()
+        #TODO: the ship is added inside Map(). We need to decouple it from Map()
+        self.ship = None
+        self.map = Map(self)
+        self.camera = Camera(self.map.width, self.map.height)
 
-# main loop
-while running:
-    # event handling, gets all event from the event queue
-    for event in pg.event.get():
-        # only do something if the event is of type QUIT
-        if event.type == pg.QUIT:
-            # change the value to False, to exit the main loop
-            running = False
+    def run(self):
+        self.playing = True
+        # self.turn_finished = False
+        while self.playing:
+            self.dt = self.clock.tick(FPS) / 1000
+            # Do animations continuously
+            # but movement of units - only on EndTurn!
+            self.events()
+            # if self.turn_finished:
+            self.update()
+                # self.turn_finished = False
+
+            self.draw()
+
+    def events(self):
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                self.quit()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    self.quit()
+                # if event.key == pg.K_e:
+                #     self.turn_finished = True
+
+    def update(self):
+        self.all_sprites.update()
+        self.camera.update(self.ship)
+
+    def draw(self):
+        self.screen.fill(BGCOLOR)
+        for sprite in self.map_sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
+        for sprite in self.unit_sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
+        pg.display.flip()
+
+    def show_start_screen(self):
+        pass
+
+    def show_go_screen(self):
+        pass
+
+    def quit(self):
+        pg.quit()
+        sys.exit()
 
 
-pg.quit()
+g = Game()
+#g.show_start_screen()
+
+while True:
+    g.run()
+    #g.show_go_screen()
+
+g.quit()
+
