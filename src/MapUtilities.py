@@ -1,10 +1,85 @@
 import pygame as pg
 from src.settings import *
-from src.Units import Ship
 import os
 import numpy as np
+from skimage import filters
 
-vec = pg.math.Vector2
+
+class MapGenerator:
+
+    @staticmethod
+    def generate_pixel_map(h, w):
+        land = MapGenerator.generate_land(h, w)
+        mountains = MapGenerator.generate_land(h, w)
+
+        # add mountains ONLY to the land:
+        full_map = land + land * mountains
+        return full_map
+
+    @staticmethod
+    def generate_land(height, width):
+        # generate land map
+        # land=1,  the sea=0:
+        sea = np.zeros((height, width))
+
+        n = 25 # number of seeds for land
+
+        # to make it completely random (randomize randomizer :)):
+        np.random.seed(np.random.randint(100))
+        # or make it reproducible with fixed randomizer:
+        # np.random.seed(1)
+
+        # generate random x,y coordinates (columns, rows):
+        columns = width * np.random.random((1, n))
+        rows = height * np.random.random((1, n))
+
+        # put these coordinates into the sea as 1s:
+        sea[rows.astype(np.int), columns.astype(np.int)] = 1
+
+        # dilate them:
+        # filter_sigma = w / (4. * n)
+        filter_sigma = 5
+        land = filters.gaussian(sea, sigma=filter_sigma)
+
+        # make it binary:
+        land = np.array(land > 0.7 * land.mean(), dtype=np.uint8)
+        return land
+
+    @staticmethod
+    def generate_mountains(height, width):
+        # TODO: repetitive functions. can be generalized.
+        # generate mountains map.
+        sea = np.zeros((height, width))
+
+        # number of seeds for mountains
+        n = 15
+
+        # to make it completely random (randomize randomizer :)):
+        np.random.seed(np.random.randint(100))
+        # or make it reproducible with fixed randomizer:
+        # np.random.seed(5)
+
+        # generate random x,y coordinates (columns, rows):
+        columns = width * np.random.random((1, n))
+        rows = height * np.random.random((1, n))
+
+        # put these coordinates into the sea as 1s:
+        sea[rows.astype(np.int), columns.astype(np.int)] = 1
+
+        # dilate them:
+        filter_sigma = 1
+        mountains = filters.gaussian(sea, sigma=filter_sigma)
+        # make it binary:
+        mountains = np.array(mountains > 0.7 * mountains.mean(), dtype=np.uint8)
+
+        return mountains
+
+    @staticmethod
+    def show(pixel_map):
+        pass
+        # fig, ax = plt.subplots(1)
+        # ax.imshow(pixel_map)
+        # plt.show()
 
 
 class Map:

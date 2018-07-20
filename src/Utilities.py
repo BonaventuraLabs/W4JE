@@ -5,8 +5,15 @@ from src.settings import *
 class ImageLoader:
     def __init__(self, game):
         self.game = game
-        self.sea = ImageLoader.load(TILE_SEA_IMAGE)
-        self.land = ImageLoader.load(TILE_LAND_IMAGE)
+
+        sea = ImageLoader.load(TILE_SEA_IMAGE)
+        self.sea = pg.transform.scale(sea, (TILEWIDTH, TILEHEIGHT))
+
+        land = ImageLoader.load(TILE_LAND_IMAGE)
+        self.land = pg.transform.scale(land, (TILEWIDTH, TILEHEIGHT))
+
+        ship = ImageLoader.load(SHIP)
+        self.ship = pg.transform.scale(ship, (TILEWIDTH, TILEHEIGHT))
 
         wind_arrow = ImageLoader.load(WIND_ARROW)
         self.wind_arrow = pg.transform.scale(wind_arrow, (30, 100))
@@ -14,20 +21,13 @@ class ImageLoader:
         compass = ImageLoader.load(HUD_COMPASS)
         self.hud_compass = pg.transform.scale(compass, (120, 120))
 
-        # WIDTH
-
         scroll = ImageLoader.load(HUD_SCROLL)
         self.hud_scroll = pg.transform.scale(scroll, (200, HEIGHT))
-
-        ship = ImageLoader.load(SHIP)
-        self.ship = pg.transform.scale(ship, (TILEWIDTH, TILEHEIGHT))
-
 
     @staticmethod
     def load(name):
         image = pg.image.load(os.path.join(FOLDER_RESOURCES, name)).convert_alpha()
         return image
-
 
 
 class Hud:
@@ -94,8 +94,10 @@ class WindArrow(pg.sprite.Sprite):
         pass#self.get_new_direction()
 
     def show_text(self):
-        label = self.game.font.render(str(self.current_strength), True, BLACK)
-        label_rect = label.get_rect(center=self.fixed_position)
+        text = 'Wind strength: ' + str(self.game.wind.current_strength)
+        label = self.game.font.render(text, True, BLACK)
+        label_rect = label.get_rect()
+        label_rect.topleft = self.game.hud.compass.rect.topleft
         self.game.screen.blit(label, label_rect)
 
     def draw(self):
@@ -105,7 +107,7 @@ class WindArrow(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.fixed_position
         self.game.screen.blit(self.image, self.rect)
-
+        self.show_text()
 
 class TurnMessage:
     def __init__(self, game):

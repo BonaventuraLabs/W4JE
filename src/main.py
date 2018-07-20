@@ -29,14 +29,12 @@ class Game:
         self.hud = Hud(self)
         self.camera = Camera(self.map.width, self.map.height)
 
-
         self.player_deque = deque([Ship(self, 10, 10, 'Dimas', YELLOW),
                                   Ship(self, 12, 12, 'Alex', RED),
-                                  Ship(self, 15, 15, 'Danila', GREEN)
-                                  ])
+                                  Ship(self, 15, 15, 'Danila', GREEN)])
+
         self.current_player = self.player_deque[0]
         self.current_player.set_current()
-        self.message = ''
 
         self.playing = True
         self.turn_finished = False
@@ -44,6 +42,7 @@ class Game:
     def run(self):
         while self.playing:
             # self.dt = self.clock.tick(FPS) / 1000
+            # print(self.clock.tick(FPS))
             # Do animations continuously
             self.update_animation()
 
@@ -67,6 +66,17 @@ class Game:
     def update_animation(self):
         self.sprites_anim.update()
 
+    def draw(self):
+        self.screen.fill(BLACK)
+        for sprite in self.map_sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
+        for sprite in self.unit_sprites:
+            sprite.draw()
+        # for sprite in self.hud_layer_sprites:
+        #     self.screen.blit(sprite.image, sprite)
+        self.hud.draw()
+        pg.display.flip()
+
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -82,17 +92,6 @@ class Game:
         self.wind.get_new_direction()
 
 
-    def draw(self):
-        self.screen.fill(BLACK)
-        for sprite in self.map_sprites:
-            self.screen.blit(sprite.image, self.camera.apply(sprite))
-        for sprite in self.unit_sprites:
-            sprite.draw()
-        # for sprite in self.hud_layer_sprites:
-        #     self.screen.blit(sprite.image, sprite)
-        self.hud.draw()
-
-        pg.display.flip()
 
     def show_start_screen(self):
         pass
