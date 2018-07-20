@@ -27,14 +27,10 @@ class Ship(pg.sprite.Sprite):
         self.is_done = False
         self.is_current = True
         self.game.camera.update(self)
-        #TODO: implement selected (with aura)
-        # self.image = ?
 
     def unset_current(self):
         self.is_done = True
         self.is_current = False
-        #TODO: implement not-selected image (no aura)
-        # self.image = ?
 
     def recalc_center(self):
         r = self.r
@@ -55,7 +51,7 @@ class Ship(pg.sprite.Sprite):
     def check_key_input(self):
         #TODO: wind effect.
         #w = self.game.wind.current_strength
-
+        #TODO: animation of moving? Otherwise the update is too abrupt.
         keys = pg.key.get_pressed()
         moved = False
         if keys[pg.K_KP1]:
