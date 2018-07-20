@@ -2,7 +2,7 @@ import pygame as pg
 from src.settings import *
 import sys
 from src.Utilities import ImageLoader, Hud
-from src.MapUtilities import Map, Camera, Wind
+from src.MapUtilities import Map, Camera, Wind, Compass
 from src.Units import Ship
 from collections import deque
 
@@ -23,6 +23,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.top_layer_sprites = pg.sprite.Group()
         self.hud = Hud(self)
+        self.compass = Compass(self)
         self.map = Map(self)
         self.camera = Camera(self.map.width, self.map.height)
         self.player_deque = deque([Ship(self, 10, 10, 'Dimas', YELLOW),

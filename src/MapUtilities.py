@@ -53,11 +53,11 @@ class Tile(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         if self.type == 'sea':
-            self.image = self.game.images.sea_1
+            self.image = self.game.images.sea
         elif self.type == 'land':
-            self.image = self.game.images.land_1
+            self.image = self.game.images.land
         else:
-            self.image = self.game.images.sea_1
+            self.image = self.game.images.sea
 
         self.rect = self.image.get_rect()
 
@@ -112,12 +112,13 @@ class Camera:
             self.camera.y -= self.speed
         # self.camera = pg.Rect(x, y, self.width, self.height)
 
+
 class Wind(pg.sprite.Sprite):
     def __init__(self, game):
         self.groups = game.top_layer_sprites, game.sprites_anim
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = self.game.images.wind_arrow_1
+        self.image = self.game.images.wind_arrow
         self.directions = {'N':0, 'NW':45, 'W':90, 'SW': 135, 'S':180, 'SE':225, 'E':270, 'NE':315}
         self.current_direction = 'N'
         self.strengths = [0, 1, 2, 3, 4]
@@ -142,7 +143,19 @@ class Wind(pg.sprite.Sprite):
         # print(self.current_direction)
         angle = self.directions[self.current_direction]
         # use the stock image for rotation!!!
-        self.image = pg.transform.rotate(self.game.images.wind_arrow_1, angle)
+        self.image = pg.transform.rotate(self.game.images.wind_arrow, angle)
         self.rect = self.image.get_rect()
         self.rect.center = self.fixed_position
         self.current_strength = np.random.choice(self.strengths)
+
+
+class Compass(pg.sprite.Sprite):
+    def __init__(self, game):
+        self.game = game
+        self.groups = game.top_layer_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
+        # self.image = pg.Surface((WIDTH, HUD_HEIGHT))
+        # self.image.fill((250, 250, 180))
+        self.image = self.game.images.hud_compass
+        self.rect = self.image.get_rect()
+        self.rect.center = (60, 60)
