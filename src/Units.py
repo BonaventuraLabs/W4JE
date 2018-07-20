@@ -11,8 +11,9 @@ class Ship(pg.sprite.Sprite):
         self.groups = game.unit_sprites, game.sprites_anim
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILEWIDTH/2, TILEWIDTH/2))
-        self.image.fill(self.color)
+        self.image = self.game.images.ship
+        #pg.Surface((TILEWIDTH/2, TILEWIDTH/2))
+        #self.image.fill(self.color)
         self.rect = self.image.get_rect()
         self.r = row
         self.c = col
@@ -83,8 +84,8 @@ class Ship(pg.sprite.Sprite):
             # sel_surf.fill(LIGHTGREY)
             # draw circle on this surface:
             circ_center = (int(D / 2), int(D / 2))
-            pg.draw.circle(sel_surf, WHITE,  circ_center, int(TILEWIDTH*0.75), 3)
-            pg.draw.circle(sel_surf, WHITE,  circ_center, int(TILEWIDTH*0.95), 3)
+            pg.draw.circle(sel_surf, self.color,  circ_center, int(TILEWIDTH*0.75), 3)
+            pg.draw.circle(sel_surf, self.color,  circ_center, int(TILEWIDTH*0.95), 3)
 
             # set proper center coordinate for this surface:
             rect = sel_surf.get_rect()

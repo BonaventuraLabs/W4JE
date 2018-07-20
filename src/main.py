@@ -2,7 +2,7 @@ import pygame as pg
 from src.settings import *
 import sys
 from src.Utilities import ImageLoader, Hud
-from src.MapUtilities import Map, Camera, Wind, Compass
+from src.MapUtilities import Map, Camera, Wind
 from src.Units import Ship
 from collections import deque
 
@@ -17,15 +17,19 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.images = ImageLoader(self)
+
         self.sprites_anim = pg.sprite.Group()
         self.unit_sprites = pg.sprite.Group()
         self.map_sprites = pg.sprite.Group()
         self.all_sprites = pg.sprite.Group()
-        self.top_layer_sprites = pg.sprite.Group()
-        self.hud = Hud(self)
-        self.compass = Compass(self)
+        self.hud_layer_sprites = pg.sprite.Group()
+
         self.map = Map(self)
+        self.wind = Wind(self)
+        self.hud = Hud(self)
         self.camera = Camera(self.map.width, self.map.height)
+
+
         self.player_deque = deque([Ship(self, 10, 10, 'Dimas', YELLOW),
                                   Ship(self, 12, 12, 'Alex', RED),
                                   Ship(self, 15, 15, 'Danila', GREEN)
@@ -33,7 +37,6 @@ class Game:
         self.current_player = self.player_deque[0]
         self.current_player.set_current()
         self.message = ''
-        self.wind = Wind(self)
 
         self.playing = True
         self.turn_finished = False
@@ -80,17 +83,15 @@ class Game:
 
 
     def draw(self):
-        self.screen.fill(BGCOLOR)
+        self.screen.fill(BLACK)
         for sprite in self.map_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         for sprite in self.unit_sprites:
             sprite.draw()
-        for sprite in self.top_layer_sprites:
-            self.screen.blit(sprite.image, sprite)
-        label = self.font.render('TURN: ' + self.current_player.name, True, BLACK)
-        label_rect = label.get_rect(center=(200, HUD_HEIGHT/2))
-        self.screen.blit(label, label_rect)
-        self.wind.show_text()
+        # for sprite in self.hud_layer_sprites:
+        #     self.screen.blit(sprite.image, sprite)
+        self.hud.draw()
+
         pg.display.flip()
 
     def show_start_screen(self):

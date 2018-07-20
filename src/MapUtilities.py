@@ -113,49 +113,21 @@ class Camera:
         # self.camera = pg.Rect(x, y, self.width, self.height)
 
 
-class Wind(pg.sprite.Sprite):
+class Wind():
     def __init__(self, game):
-        self.groups = game.top_layer_sprites, game.sprites_anim
-        pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = self.game.images.wind_arrow
         self.directions = {'N':0, 'NW':45, 'W':90, 'SW': 135, 'S':180, 'SE':225, 'E':270, 'NE':315}
         self.current_direction = 'N'
         self.strengths = [0, 1, 2, 3, 4]
         self.current_strength = 0
-        self.rect = self.image.get_rect()
-        # recalculate x, y
-        self.fixed_position = (50, HUD_HEIGHT/2)
-        self.rect.center = self.fixed_position
         # 0 - shtil, 4 - storm.
 
     def update(self, *args):
         pass#self.get_new_direction()
 
-    def show_text(self):
-        label = self.game.font.render(str(self.current_strength), True, BLACK)
-        label_rect = label.get_rect(center=self.fixed_position)
-        self.game.screen.blit(label, label_rect)
-
-
     def get_new_direction(self):
         self.current_direction = np.random.choice(list(self.directions.keys()))
-        # print(self.current_direction)
-        angle = self.directions[self.current_direction]
-        # use the stock image for rotation!!!
-        self.image = pg.transform.rotate(self.game.images.wind_arrow, angle)
-        self.rect = self.image.get_rect()
-        self.rect.center = self.fixed_position
         self.current_strength = np.random.choice(self.strengths)
+        # print(self.current_direction)
 
 
-class Compass(pg.sprite.Sprite):
-    def __init__(self, game):
-        self.game = game
-        self.groups = game.top_layer_sprites
-        pg.sprite.Sprite.__init__(self, self.groups)
-        # self.image = pg.Surface((WIDTH, HUD_HEIGHT))
-        # self.image.fill((250, 250, 180))
-        self.image = self.game.images.hud_compass
-        self.rect = self.image.get_rect()
-        self.rect.center = (60, 60)
