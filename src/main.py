@@ -39,6 +39,9 @@ class Game:
         self.playing = True
         self.turn_finished = False
 
+        self.rmb_drag = False #right mouse button
+        self.rmb_dag_xy = self.current_player.xy
+
     def run(self):
         while self.playing:
             # self.dt = self.clock.tick(FPS) / 1000
@@ -65,6 +68,23 @@ class Game:
 
     def update_animation(self):
         self.sprites_anim.update()
+        if self.rmb_drag:
+            xy = pg.mouse.get_pos()
+            # print('-------')
+            # print(xy)
+            delta_x = self.rmb_dag_xy[0] - xy[0]
+            delta_y = self.rmb_dag_xy[1] - xy[1]
+            # print(delta_x)
+
+            self.rmb_dag_xy = xy
+            # print(self.rmb_dag_xy)
+            self.camera.rect.x -= delta_x
+            self.camera.rect.y -= delta_y
+
+        else:
+            # self.rmb_dag_xy
+            pass
+
 
     def draw(self):
         self.screen.fill(BLACK)
@@ -88,10 +108,16 @@ class Game:
                     self.current_player.check_key_input()
                     self.camera.check_key_input()
 
+            # switch draggin on-off
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
+                self.rmb_drag = True
+                self.rmb_dag_xy = pg.mouse.get_pos()
+
+            elif event.type == pg.MOUSEBUTTONUP and event.button == 3:
+                self.rmb_drag = False
+
     def update_state_on_turn(self):
         self.wind.get_new_direction()
-
-
 
     def show_start_screen(self):
         pass

@@ -3,18 +3,91 @@ from src.settings import *
 import os
 import numpy as np
 from skimage import filters
-
+from collections import namedtuple
 
 class MapGenerator:
 
     @staticmethod
-    def generate_pixel_map(h, w):
-        land = MapGenerator.generate_land(h, w)
-        mountains = MapGenerator.generate_land(h, w)
+    def generate_from_txt(game):
+        file_path = os.path.join(FOLDER_RESOURCES, 'map_1.txt')
+        data = []
+        with open(file_path, 'rt') as f:
+            for line in f:
+                data.append(line)
+
+        # TODO: wrong. height in pix is not N*y, because the tiles are shifted. Works so far.
+        height_in_tiles_numbers = len(data)
+        width_in_tiles_numbers = len(data[0])
+        height_in_pix = height_in_tiles_numbers * TILEHEIGHT
+        width_in_pix = width_in_tiles_numbers * TILEWIDTH
+
+        tile_dict = {}
+        for row, tiles in enumerate(data):
+            for col, el in enumerate(tiles):
+                if el == '1':
+                    tile_type = 'land'
+                elif el == '.':
+                    tile_type = 'sea'
+                # elif el == 'P':
+                #     self.game.ship = Ship(self.game, row, col)
+                else:
+                    tile_type = 'sea'
+
+                # generate a tile:
+                tile_dict[str(row) + '.' + str(col)] = Tile(game, row, col, tile_type)
+
+        MapInfo = namedtuple('MapInfo',
+                             ['tile_dict', 'width_in_tile_numbers', 'height_in_tile_numbers',
+                             'height_in_pix', 'width_in_pix'])
+
+        map_info = MapInfo(tile_dict=tile_dict,
+                           width_in_tile_numbers=width_in_tiles_numbers,
+                           height_in_tile_numbers=height_in_tiles_numbers,
+                           height_in_pix=height_in_pix,
+                           width_in_pix=width_in_pix)
+        return map_info
+
+    @staticmethod
+    def generate_from_numpy(game, rows, columns):
+        land = MapGenerator.generate_land(rows, columns)
+        mountains = MapGenerator.generate_land(rows, columns)
 
         # add mountains ONLY to the land:
-        full_map = land + land * mountains
-        return full_map
+        pixel_map = land + land * mountains
+
+        height_in_tiles_numbers = rows
+        width_in_tiles_numbers = columns
+        height_in_pix = height_in_tiles_numbers * TILEHEIGHT
+        width_in_pix = width_in_tiles_numbers * TILEWIDTH
+
+        tile_dict = {}
+        # the keys will be coordinates r.c (e.g. '1.2' or '23.49')
+        for row in range(0, rows):
+            for col in range(0, columns):
+                el = pixel_map[row, col]
+                if el == 0:
+                    tile_type = 'sea'
+                elif el == 1:
+                    tile_type = 'land'
+                elif el == 2:
+                    tile_type = 'mountain'
+                else:
+                    print('Unknown tile index. Using "sea" instead.')
+                    tile_type = 'sea'
+
+                # generate a tile:
+                tile_dict[str(row) + '.' + str(col)] = Tile(game, row, col, tile_type)
+
+        MapInfo = namedtuple('MapInfo',
+                             ['tile_dict', 'width_in_tile_numbers', 'height_in_tile_numbers',
+                              'height_in_pix', 'width_in_pix'])
+
+        map_info = MapInfo(tile_dict=tile_dict,
+                           width_in_tile_numbers=width_in_tiles_numbers,
+                           height_in_tile_numbers=height_in_tiles_numbers,
+                           height_in_pix=height_in_pix,
+                           width_in_pix=width_in_pix)
+        return map_info
 
     @staticmethod
     def generate_land(height, width):
@@ -74,51 +147,23 @@ class MapGenerator:
 
         return mountains
 
-    @staticmethod
-    def show(pixel_map):
-        pass
-        # fig, ax = plt.subplots(1)
-        # ax.imshow(pixel_map)
-        # plt.show()
-
 
 class Map:
     def __init__(self, game):
         self.game = game
-        file_path = os.path.join(FOLDER_RESOURCES, 'map_1.txt')
-        self.data = []
-        with open(file_path, 'rt') as f:
-            for line in f:
-                self.data.append(line)
-        self.tilewidth = len(self.data[0])
-        self.tileheight = len(self.data)
-
-        #TODO: wrong. height is not N*y, because the tiles are shifted
-        self.height = self.tileheight * TILEHEIGHT
-        self.width = self.tilewidth * TILEWIDTH
-        self.tiles_dict = self.generate_tiles()
+        #map_info = MapGenerator.generate_from_txt(game)
+        map_info = MapGenerator.generate_from_numpy(game, 100, 100)
+        self.tiles_dict = map_info.tile_dict
+        self.tilewidth = map_info.width_in_tile_numbers
+        self.tileheight = map_info.height_in_tile_numbers
+        self.height = map_info.height_in_pix
+        self.width = map_info.width_in_pix
 
     def draw(self):
         pass
 
     def update(self):
         pass
-
-    def generate_tiles(self):
-        tile_dict = {}
-        for row, tiles in enumerate(self.data):
-            for col, el in enumerate(tiles):
-                if el == '1':
-                    tile_type = 'land'
-                elif el == '.':
-                    tile_type = 'sea'
-                # elif el == 'P':
-                #     self.game.ship = Ship(self.game, row, col)
-                else:
-                    tile_type = 'sea'
-
-                tile_dict[str(row) + '.' + str(col)] = Tile(self.game, row, col, tile_type)
-        return tile_dict
 
 
 class Tile(pg.sprite.Sprite):
@@ -131,8 +176,9 @@ class Tile(pg.sprite.Sprite):
             self.image = self.game.images.sea
         elif self.type == 'land':
             self.image = self.game.images.land
-        else:
-            self.image = self.game.images.sea
+        elif self.type == 'mountain':
+            self.image = self.game.images.land
+            self.image.blit(self.game.images.mountain, (0, 0))
 
         self.rect = self.image.get_rect()
 
@@ -162,29 +208,38 @@ class Tile(pg.sprite.Sprite):
 
 class Camera:
     def __init__(self, width, height):
-        self.camera = pg.Rect(0, 0, width, height)
+        self.rect = pg.Rect(0, 0, width, height)
         self.width = width
         self.height = height
         self.speed = CAMERA_SPEED
 
-    def apply(self, target):
-        return target.rect.move(self.camera.topleft)
+    # def apply(self, target):
+    #     return target.rect.move(self.camera.topleft)
 
-    def update(self, target):
-        x = -target.rect.x + int(WIDTH/2)
-        y = -target.rect.y + int(HEIGHT/2)
-        self.camera = pg.Rect(x, y, self.width, self.height)
+    def apply(self, target):
+        return target.rect.move(self.rect.topleft)
+
+    def update(self, x, y):
+        # def update(self, target):
+        #     x = -target.rect.x + int(WIDTH/2)
+        #     y = -target.rect.y + int(HEIGHT/2)
+        #     self.camera = pg.Rect(x, y, self.width, self.height)
+
+        # same as old, but directly with x and y; this is more flexible than "target.rect.x"
+        x_shifted = - x + int(WIDTH / 2)
+        y_shifted = - y + int(HEIGHT / 2)
+        self.rect = pg.Rect(x_shifted, y_shifted, self.width, self.height)
 
     def check_key_input(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
-            self.camera.x += self.speed
+            self.rect.x += self.speed
         if keys[pg.K_RIGHT]:
-            self.camera.x -= self.speed
+            self.rect.x -= self.speed
         if keys[pg.K_UP]:
-            self.camera.y += self.speed
+            self.rect.y += self.speed
         if keys[pg.K_DOWN]:
-            self.camera.y -= self.speed
+            self.rect.y -= self.speed
         # self.camera = pg.Rect(x, y, self.width, self.height)
 
 

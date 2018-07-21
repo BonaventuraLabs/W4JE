@@ -75,7 +75,8 @@ class Ship(pg.sprite.Sprite):
     def set_current(self):
         self.is_done = False
         self.is_current = True
-        self.game.camera.update(self)
+        self.recalc_center()
+        self.game.camera.update(self.rect.x, self.rect.y)
 
     def unset_current(self):
         self.is_done = True

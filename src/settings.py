@@ -4,6 +4,7 @@ import os
 FOLDER_RESOURCES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'resources'))
 TILE_SEA_IMAGE = 'tile_sea_1.png'
 TILE_LAND_IMAGE = 'tile_land_1.png'
+TILE_MOUNTAIN_IMAGE = 'tile_mountain_1.png'
 WIND_ARROW = 'wind_arrow_2.png'
 HUD_SCROLL = 'hud_scroll_2.png'
 HUD_COMPASS = 'hud_compass_1.png'

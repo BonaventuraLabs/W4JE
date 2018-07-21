@@ -12,6 +12,9 @@ class ImageLoader:
         land = ImageLoader.load(TILE_LAND_IMAGE)
         self.land = pg.transform.scale(land, (TILEWIDTH, TILEHEIGHT))
 
+        mountain = ImageLoader.load(TILE_MOUNTAIN_IMAGE)
+        self.mountain = pg.transform.scale(mountain, (TILEWIDTH, TILEHEIGHT))
+
         ship = ImageLoader.load(SHIP)
         self.ship = pg.transform.scale(ship, (TILEWIDTH, TILEHEIGHT))
 
