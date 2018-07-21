@@ -56,7 +56,7 @@ class Aura(pg.sprite.Sprite):
 
 class Ship(pg.sprite.Sprite):
     def __init__(self, game, row, col, name, color):
-        self.groups = game.unit_sprites, game.sprites_anim
+        self.groups = game.sprites_unit, game.sprites_anim
         pg.sprite.Sprite.__init__(self, self.groups)
         self.name = name
         self.color = color
@@ -71,6 +71,7 @@ class Ship(pg.sprite.Sprite):
         self.rect.center = self.xy
         self.is_done = True  # not his turn at creation
         self.is_current = False
+        self.moved = False
 
     def set_current(self):
         self.is_done = False
@@ -99,34 +100,12 @@ class Ship(pg.sprite.Sprite):
         self.rect.center = self.xy
         self.aura.set_center(self.xy)
 
+    #TODO: wind effect.
+    #TODO: animation of moving? Otherwise the update is too abrupt.
 
-    def check_key_input(self):
-        #TODO: wind effect.
-        #w = self.game.wind.current_strength
-        #TODO: animation of moving? Otherwise the update is too abrupt.
-        keys = pg.key.get_pressed()
-        moved = False
-        if keys[pg.K_KP1]:
-            self.move_ld()
-            moved = True
-        if keys[pg.K_KP3]:
-            self.move_rd()
-            moved = True
-        if keys[pg.K_KP4]:
-            self.move_l()
-            moved = True
-        if keys[pg.K_KP6]:
-            self.move_r()
-            moved = True
-        if keys[pg.K_KP7]:
-            self.move_lu()
-            moved = True
-        if keys[pg.K_KP9]:
-            self.move_ru()
-            moved = True
-        if moved:
-            self.recalc_center()
-            self.unset_current()
+    def on_moved(self):
+        self.recalc_center()
+        self.unset_current()
 
     def draw(self):
         if self.is_current:
@@ -148,9 +127,11 @@ class Ship(pg.sprite.Sprite):
 
     def move_l(self):
         self.c -= 1
+        self.on_moved()
 
     def move_r(self):
         self.c += 1
+        self.on_moved()
 
     def move_ru(self):
         if self.r % 2 == 0:
@@ -159,6 +140,7 @@ class Ship(pg.sprite.Sprite):
         else:
             self.r -= 1
             self.c += 1
+        self.on_moved()
 
     def move_lu(self):
         if self.r % 2 == 0:
@@ -167,6 +149,7 @@ class Ship(pg.sprite.Sprite):
         else:
             self.r -= 1
             self.c -= 0
+        self.on_moved()
 
     def move_rd(self):
         if self.r % 2 == 0:
@@ -175,6 +158,7 @@ class Ship(pg.sprite.Sprite):
         else:
             self.r += 1
             self.c += 1
+        self.on_moved()
 
     def move_ld(self):
         if self.r % 2 == 0:
@@ -183,3 +167,4 @@ class Ship(pg.sprite.Sprite):
         else:
             self.r += 1
             self.c += 0
+        self.on_moved()

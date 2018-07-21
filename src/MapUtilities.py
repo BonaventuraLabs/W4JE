@@ -169,7 +169,7 @@ class Map:
 class Tile(pg.sprite.Sprite):
     def __init__(self, game, row, col, tile_type):
         self.type = tile_type
-        self.groups = game.map_sprites, game.sprites_anim
+        self.groups = game.sprites_map, game.sprites_anim
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         if self.type == 'sea':
@@ -230,20 +230,20 @@ class Camera:
         y_shifted = - y + int(HEIGHT / 2)
         self.rect = pg.Rect(x_shifted, y_shifted, self.width, self.height)
 
-    def check_key_input(self):
-        keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT]:
-            self.rect.x += self.speed
-        if keys[pg.K_RIGHT]:
-            self.rect.x -= self.speed
-        if keys[pg.K_UP]:
-            self.rect.y += self.speed
-        if keys[pg.K_DOWN]:
-            self.rect.y -= self.speed
-        # self.camera = pg.Rect(x, y, self.width, self.height)
+    def move_left(self):
+        self.rect.x += self.speed
+
+    def move_right(self):
+        self.rect.x -= self.speed
+
+    def move_up(self):
+        self.rect.y += self.speed
+
+    def move_down(self):
+        self.rect.y -= self.speed
 
 
-class Wind():
+class Wind:
     def __init__(self, game):
         self.game = game
         self.directions = {'N':0, 'NW':45, 'W':90, 'SW': 135, 'S':180, 'SE':225, 'E':270, 'NE':315}

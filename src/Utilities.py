@@ -55,7 +55,7 @@ class Scroll(pg.sprite.Sprite):
 
     def __init__(self, game):
         self.game = game
-        self.groups = game.hud_layer_sprites
+        self.groups = game.sprites_hud
         pg.sprite.Sprite.__init__(self, self.groups)
         # self.image = pg.Surface((WIDTH, HUD_HEIGHT))
         # self.image.fill((250, 250, 180))
@@ -71,7 +71,7 @@ class Compass(pg.sprite.Sprite):
 
     def __init__(self, game):
         self.game = game
-        self.groups = game.hud_layer_sprites
+        self.groups = game.sprites_hud
         pg.sprite.Sprite.__init__(self, self.groups)
         # self.image = pg.Surface((WIDTH, HUD_HEIGHT))
         # self.image.fill((250, 250, 180))
@@ -85,7 +85,7 @@ class Compass(pg.sprite.Sprite):
 
 class WindArrow(pg.sprite.Sprite):
     def __init__(self, game):
-        self.groups = game.hud_layer_sprites, game.sprites_anim
+        self.groups = game.sprites_hud, game.sprites_anim
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = self.game.images.wind_arrow
