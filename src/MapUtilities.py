@@ -1,5 +1,5 @@
 import pygame as pg
-from src.settings import *
+from src.Settings import *
 import os
 import numpy as np
 from skimage import filters
@@ -173,12 +173,12 @@ class Tile(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         if self.type == 'sea':
-            self.image = self.game.images.sea
+            self.image = self.game.image_manager.sea
         elif self.type == 'land':
-            self.image = self.game.images.land
+            self.image = self.game.image_manager.land
         elif self.type == 'mountain':
-            self.image = self.game.images.land
-            self.image.blit(self.game.images.mountain, (0, 0))
+            self.image = self.game.image_manager.land
+            self.image.blit(self.game.image_manager.mountain, (0, 0))
 
         self.rect = self.image.get_rect()
 

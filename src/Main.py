@@ -1,11 +1,12 @@
 import sys
 from collections import deque
 import pygame as pg
-from src.settings import *
-from src.Utilities import ImageLoader, Hud
+from src.Settings import *
+from src.Hud import Hud
+from src.Utilities import ImageManager
 from src.MapUtilities import Map, Camera, Wind
 from src.Units import Ship
-from src.EventManagers import KeyManager
+from src.EventManagers import EventManager
 
 
 class Game:
@@ -18,7 +19,7 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
-        self.images = ImageLoader(self)
+        self.image_manager = ImageManager(self)
 
         self.sprites_all = pg.sprite.Group()
         self.sprites_anim = pg.sprite.Group()
@@ -26,7 +27,7 @@ class Game:
         self.sprites_map = pg.sprite.Group()
         self.sprites_hud = pg.sprite.Group()
 
-        self.event_manager = KeyManager(self)
+        self.event_manager = EventManager(self)
         self.map = Map(self)
         self.wind = Wind(self)
         self.hud = Hud(self)

@@ -1,7 +1,7 @@
 import pygame as pg
 
 
-class KeyManager:
+class EventManager:
     def __init__(self, game):
         self.game = game
 
@@ -28,16 +28,19 @@ class KeyManager:
                     self.game.current_player.move_lu()
                 elif event.key == pg.K_KP9:
                     self.game.current_player.move_ru()
+                elif event.key == pg.K_KP5:
+                    self.game.camera.update(self.game.current_player.rect.x,
+                                            self.game.current_player.rect.y)
 
                 # Camera:
                 elif event.key == pg.K_LEFT:
-                    self.camera.move_left()
+                    self.game.camera.move_left()
                 elif event.key == pg.K_RIGHT:
-                    self.camera.move_right()
+                    self.game.camera.move_right()
                 elif event.key == pg.K_UP:
-                    self.camera.move_up()
+                    self.game.camera.move_up()
                 elif event.key == pg.K_DOWN:
-                    self.camera.move_down()
+                    self.game.camera.move_down()
 
             # switch dragging on-off
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:

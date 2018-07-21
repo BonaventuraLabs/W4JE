@@ -1,5 +1,5 @@
 import pygame as pg
-from src.settings import *
+from src.Settings import *
 import numpy as np
 from collections import namedtuple
 vec = pg.math.Vector2
@@ -61,7 +61,7 @@ class Ship(pg.sprite.Sprite):
         self.name = name
         self.color = color
         self.game = game
-        self.image = self.game.images.ship
+        self.image = self.game.image_manager.ship
         self.aura = Aura(self)
         self.rect = self.image.get_rect()
         self.r = row

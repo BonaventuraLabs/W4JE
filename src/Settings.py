@@ -9,6 +9,7 @@ WIND_ARROW = 'wind_arrow_2.png'
 HUD_SCROLL = 'hud_scroll_2.png'
 HUD_COMPASS = 'hud_compass_1.png'
 SHIP = 'ship_1.png'
+CLOUDS_1_6 = 'image_cloud_1.png'
 
 TITLE = 'W4JE'
 
