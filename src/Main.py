@@ -4,7 +4,7 @@ import pygame as pg
 from src.Settings import *
 from src.Hud import Hud
 from src.Utilities import ImageManager
-from src.MapUtilities import Map, Camera, Wind
+from src.MapUtilities import Map, Camera, Wind, Cloud
 from src.Units import Ship
 from src.EventManagers import EventManager
 
@@ -32,6 +32,9 @@ class Game:
         self.wind = Wind(self)
         self.hud = Hud(self)
         self.camera = Camera(self.map.width, self.map.height)
+        self.clouds = []
+        for i in range(0, 200):
+            self.clouds.append(Cloud(self))
 
         self.player_deque = deque([Ship(self, 10, 10, 'Dimas', YELLOW),
                                   Ship(self, 12, 12, 'Alex', RED),
@@ -94,6 +97,8 @@ class Game:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         for sprite in self.sprites_unit:
             sprite.draw()
+        for cloud in self.clouds:
+            cloud.draw()
         # for sprite in self.sprites_hud:
         #     self.screen.blit(sprite.image, sprite)
         self.hud.draw()

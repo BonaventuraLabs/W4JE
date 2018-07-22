@@ -73,7 +73,8 @@ class WindArrow(pg.sprite.Sprite):
         self.game.screen.blit(label, label_rect)
 
     def draw(self):
-        angle = self.game.wind.directions[self.game.wind.current_direction]
+        angle = self.game.wind.current_angle
+        # self.game.wind.directions[self.game.wind.current_direction]
         # use ONLY the stock image for rotation.
         self.image = pg.transform.rotate(self.game.image_manager.wind_arrow, angle)
         self.rect = self.image.get_rect()

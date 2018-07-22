@@ -1,6 +1,17 @@
 import pygame as pg
 from src.Settings import *
 
+'''Resources'''
+FOLDER_RESOURCES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'resources'))
+TILE_SEA_IMAGE = 'tile_sea_1.png'
+TILE_LAND_IMAGE = 'tile_land_1.png'
+TILE_MOUNTAIN_IMAGE = 'tile_mountain_1.png'
+WIND_ARROW = 'wind_arrow_2.png'
+HUD_SCROLL = 'hud_scroll_2.png'
+HUD_COMPASS = 'hud_compass_1.png'
+SHIP = 'ship_1.png'
+CLOUDS_1_6 = ['image_cloud_', '.png']
+
 
 class ImageManager:
     def __init__(self, game):
@@ -27,8 +38,20 @@ class ImageManager:
         scroll = ImageManager.load(HUD_SCROLL)
         self.hud_scroll = pg.transform.scale(scroll, (200, HEIGHT))
 
+        self.cloud_list = ImageManager.load_cloud_list()
+
     @staticmethod
     def load(name):
         image = pg.image.load(os.path.join(FOLDER_RESOURCES, name)).convert_alpha()
         return image
 
+    @staticmethod
+    def load_cloud_list():
+        cloud_list = []
+        for i in range(1, 7):
+            img_name = CLOUDS_1_6[0] + str(i) + CLOUDS_1_6[1]
+            img = ImageManager.load(img_name)
+            # resize?
+            img = pg.transform.scale(img, (300, 100))
+            cloud_list.append(img)
+        return cloud_list

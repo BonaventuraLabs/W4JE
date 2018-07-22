@@ -248,8 +248,9 @@ class Wind:
         self.game = game
         self.directions = {'N':0, 'NW':45, 'W':90, 'SW': 135, 'S':180, 'SE':225, 'E':270, 'NE':315}
         self.current_direction = 'N'
+        self.current_angle = 0
         self.strengths = [0, 1, 2, 3, 4]
-        self.current_strength = 0
+        self.current_strength = 3
         # 0 - shtil, 4 - storm.
 
     def update(self, *args):
@@ -257,7 +258,43 @@ class Wind:
 
     def get_new_direction(self):
         self.current_direction = np.random.choice(list(self.directions.keys()))
+        self.current_angle = self.directions[self.current_direction]
         self.current_strength = np.random.choice(self.strengths)
         # print(self.current_direction)
 
 
+class Cloud(pg.sprite.Sprite):
+    def __init__(self, game):
+        self.groups = game.sprites_anim
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = np.random.choice(self.game.image_manager.cloud_list)
+        self.rect = self.image.get_rect()
+        self.rect.center = (np.random.randint(0, self.game.map.width),
+                            np.random.randint(0, self.game.map.height))
+        self.frame_skipper = 0
+        self.frame_skipper_max = 10
+
+    def update(self, *args):
+        # make it slower!!!.
+        if self.frame_skipper < self.frame_skipper_max:
+            self.frame_skipper += 1
+            return
+        else:
+            self.frame_skipper = 0
+
+        angle = self.game.wind.current_angle
+        self.rect.x += self.game.wind.current_strength * np.cos(np.deg2rad(90 + angle))
+        self.rect.y -= self.game.wind.current_strength * np.sin(np.deg2rad(90 + angle))
+
+        if self.rect.left > self.game.map.width:
+            self.rect.right = 0
+        if self.rect.right < 0:
+            self.rect.left = self.game.map.width
+        if self.rect.top > self.game.map.height:
+            self.rect.bottom = 0
+        if self.rect.bottom > self.game.map.height:
+            self.rect.top = self.game.map.height
+
+    def draw(self):
+        self.game.screen.blit(self.image, self.game.camera.apply(self))
