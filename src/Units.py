@@ -68,10 +68,14 @@ class Ship(pg.sprite.Sprite):
         self.c = col
         self.xy = None
         self.recalc_center()
+        self.r_prev = row
+        self.c_prev = col
+        self.xy_prev = self.xy[:]
         self.rect.center = self.xy
         self.is_done = True  # not his turn at creation
         self.is_current = False
         self.moved = False
+        self.moving_anim_on = False
 
     def set_current(self):
         self.is_done = False
@@ -84,28 +88,36 @@ class Ship(pg.sprite.Sprite):
         self.is_current = False
 
     def recalc_center(self):
-        r = self.r
-        c = self.c
+        self.r_prev = self.r
+        self.c_prev = self.c
+        self.xy_prev = self.xy
+
+        # bounding box of a tile:
         rx = TILER * np.cos(np.pi / 6)
         ry = TILER
+
         # real coordinates on map;
         # shift to right each 2nd row
-        if r % 2 == 0:
-            x = c * 2 * rx
-            y = r * 1.5 * ry
+        if self.r % 2 == 0:
+            x = self.c * 2 * rx
+            y = self.r * 1.5 * ry
         else:
-            x = c * 2 * rx + rx  # here we shift to right.
-            y = r * 1.5 * ry
-        self.xy = x, y
+            x = self.c * 2 * rx + rx  # here we shift to right.
+            y = self.r * 1.5 * ry
+        self.xy = [x, y]
         self.rect.center = self.xy
         self.aura.set_center(self.xy)
 
-    #TODO: wind effect.
-    #TODO: animation of moving? Otherwise the update is too abrupt.
-
+    # TODO: wind effect.
     def on_moved(self):
         self.recalc_center()
-        self.unset_current()
+        self.moving_anim_on = True
+        # set back for animation
+        self.rect.center = self.xy_prev  # self.xy
+        self.aura.set_center(self.rect.center)
+        #print(self.xy_prev)
+        #print(self.xy)
+
 
     def draw(self):
         if self.is_current:
@@ -121,9 +133,41 @@ class Ship(pg.sprite.Sprite):
         return label
 
     def update(self, *args):
-        # resize aura?
+
+        if self.moving_anim_on:
+
+            # print('------')
+            # print(self.xy_prev)
+            # print(self.xy)
+
+            # check in which direction should move:
+            dx = self.xy[0] - self.rect.center[0]
+            dy = self.xy[1] - self.rect.center[1]
+
+            # print(dx)
+
+            if dx > 0:
+                self.rect.center = (self.rect.center[0]+1, self.rect.center[1])  # stupid, because tuple cannot be += 1
+            if dx < 0:
+                self.rect.center = (self.rect.center[0] - 1, self.rect.center[1])
+            if dy > 0:
+                self.rect.center = (self.rect.center[0], self.rect.center[1] + 1)
+            if dy < 0:
+                self.rect.center = (self.rect.center[0], self.rect.center[1] - 1)
+
+            self.aura.set_center(self.rect.center)
+
+            # check if done
+            if abs(dx) < 1 and abs(dy) < 1:
+                self.moving_anim_on = False
+                self.rect.center = self.xy
+                self.aura.set_center(self.xy)
+                self.unset_current()
+
+        # shuffle aura
         if self.is_current:
             self.aura.update()
+
 
     def move_l(self):
         self.c -= 1
