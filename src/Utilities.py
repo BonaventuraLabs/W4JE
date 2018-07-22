@@ -10,6 +10,8 @@ WIND_ARROW = 'wind_arrow_2.png'
 HUD_SCROLL = 'hud_scroll_2.png'
 HUD_COMPASS = 'hud_compass_1.png'
 SHIP = 'ship_1.png'
+SEAGULL = 'image_seagull_1.png'
+
 CLOUDS_1_6 = ['image_cloud_', '.png']
 
 
@@ -38,6 +40,9 @@ class ImageManager:
         scroll = ImageManager.load(HUD_SCROLL)
         self.hud_scroll = pg.transform.scale(scroll, (200, HEIGHT))
 
+        seagull = ImageManager.load(SEAGULL)
+        self.seagull = pg.transform.scale(seagull, (40, 20))
+
         self.cloud_list = ImageManager.load_cloud_list()
 
     @staticmethod
@@ -51,6 +56,7 @@ class ImageManager:
         for i in range(1, 7):
             img_name = CLOUDS_1_6[0] + str(i) + CLOUDS_1_6[1]
             img = ImageManager.load(img_name)
+            # img.set_alpha(10)  # does not work if an image ha its own per-poxel transparency
             # resize?
             img = pg.transform.scale(img, (300, 100))
             cloud_list.append(img)

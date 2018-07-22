@@ -14,20 +14,10 @@ class EventManager:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.game.quit()
-
                 # Unit movement
-                elif event.key == pg.K_KP1:
-                    self.game.current_player.move_ld()
-                elif event.key == pg.K_KP3:
-                    self.game.current_player.move_rd()
-                elif event.key == pg.K_KP4:
-                    self.game.current_player.move_l()
-                elif event.key == pg.K_KP6:
-                    self.game.current_player.move_r()
-                elif event.key == pg.K_KP7:
-                    self.game.current_player.move_lu()
-                elif event.key == pg.K_KP9:
-                    self.game.current_player.move_ru()
+                elif event.key in [pg.K_KP1, pg.K_KP3, pg.K_KP4, pg.K_KP6, pg.K_KP7, pg.K_KP9]:
+                    self.game.current_player.move(event.key)
+                # center camera on player
                 elif event.key == pg.K_KP5:
                     self.game.camera.update(self.game.current_player.rect.x,
                                             self.game.current_player.rect.y)

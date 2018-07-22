@@ -4,7 +4,7 @@ import pygame as pg
 from src.Settings import *
 from src.Hud import Hud
 from src.Utilities import ImageManager
-from src.MapUtilities import Map, Camera, Wind, Cloud
+from src.MapUtilities import Map, Camera, Wind, Cloud, Seagull
 from src.Units import Ship
 from src.EventManagers import EventManager
 
@@ -35,6 +35,9 @@ class Game:
         self.clouds = []
         for i in range(0, 200):
             self.clouds.append(Cloud(self))
+        self.seagulls = []
+        for i in range(0, 200):
+            self.seagulls.append(Seagull(self))
 
         self.player_deque = deque([Ship(self, 10, 10, 'Dimas', YELLOW),
                                   Ship(self, 12, 12, 'Alex', RED),
@@ -75,6 +78,7 @@ class Game:
 
     def update_animation(self):
         self.sprites_anim.update()
+
         if self.rmb_drag:
             xy = pg.mouse.get_pos()
             # print('-------')
@@ -97,6 +101,8 @@ class Game:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         for sprite in self.sprites_unit:
             sprite.draw()
+        for seagull in self.seagulls:
+            seagull.draw()
         for cloud in self.clouds:
             cloud.draw()
         # for sprite in self.sprites_hud:

@@ -118,7 +118,6 @@ class Ship(pg.sprite.Sprite):
         #print(self.xy_prev)
         #print(self.xy)
 
-
     def draw(self):
         if self.is_current:
             self.game.screen.blit(self.aura.image, self.game.camera.apply(self.aura))
@@ -168,16 +167,36 @@ class Ship(pg.sprite.Sprite):
         if self.is_current:
             self.aura.update()
 
+    def check_what_in_target_tile(self):
+        print('Check what in target tile')
+
+    def move(self, event_key):
+        if event_key == pg.K_KP1:
+            self.move_ld()
+        elif event_key == pg.K_KP3:
+            self.move_rd()
+        elif event_key == pg.K_KP4:
+            self.move_l()
+        elif event_key == pg.K_KP6:
+            self.move_r()
+        elif event_key == pg.K_KP7:
+            self.move_lu()
+        elif event_key == pg.K_KP9:
+            self.move_ru()
+
 
     def move_l(self):
+        self.check_what_in_target_tile()
         self.c -= 1
         self.on_moved()
 
     def move_r(self):
+        self.check_what_in_target_tile()
         self.c += 1
         self.on_moved()
 
     def move_ru(self):
+        self.check_what_in_target_tile()
         if self.r % 2 == 0:
             self.r -= 1
             self.c += 0
@@ -187,6 +206,7 @@ class Ship(pg.sprite.Sprite):
         self.on_moved()
 
     def move_lu(self):
+        self.check_what_in_target_tile()
         if self.r % 2 == 0:
             self.r -= 1
             self.c -= 1
@@ -196,6 +216,7 @@ class Ship(pg.sprite.Sprite):
         self.on_moved()
 
     def move_rd(self):
+        self.check_what_in_target_tile()
         if self.r % 2 == 0:
             self.r += 1
             self.c += 0
@@ -205,6 +226,7 @@ class Ship(pg.sprite.Sprite):
         self.on_moved()
 
     def move_ld(self):
+        self.check_what_in_target_tile()
         if self.r % 2 == 0:
             self.r += 1
             self.c -= 1

@@ -4,6 +4,8 @@ import os
 import numpy as np
 from skimage import filters
 from collections import namedtuple
+from src.Settings import *
+
 
 class MapGenerator:
 
@@ -54,6 +56,8 @@ class MapGenerator:
 
         # add mountains ONLY to the land:
         pixel_map = land + land * mountains
+
+        #surf = pg.surfarray.make_surface(Z)
 
         height_in_tiles_numbers = rows
         width_in_tiles_numbers = columns
@@ -154,6 +158,9 @@ class Map:
         #map_info = MapGenerator.generate_from_txt(game)
         map_info = MapGenerator.generate_from_numpy(game, 100, 100)
         self.tiles_dict = map_info.tile_dict
+
+        # TODO: minimap = pg.Surface()
+
         self.tilewidth = map_info.width_in_tile_numbers
         self.tileheight = map_info.height_in_tile_numbers
         self.height = map_info.height_in_pix
@@ -257,6 +264,7 @@ class Wind:
         pass#self.get_new_direction()
 
     def get_new_direction(self):
+
         self.current_direction = np.random.choice(list(self.directions.keys()))
         self.current_angle = self.directions[self.current_direction]
         self.current_strength = np.random.choice(self.strengths)
@@ -298,3 +306,47 @@ class Cloud(pg.sprite.Sprite):
 
     def draw(self):
         self.game.screen.blit(self.image, self.game.camera.apply(self))
+
+
+
+class Seagull(pg.sprite.Sprite):
+    def __init__(self, game):
+        self.groups = game.sprites_anim
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = self.game.image_manager.seagull
+        self.rect = self.image.get_rect()
+
+        self.frame_skipper = 0
+        self.frame_skipper_max = 2
+
+        self.orbit_r = np.random.randint(0, 200)
+        self.orbit_c = (np.random.randint(0, self.game.map.width),
+                        np.random.randint(0, self.game.map.height))
+        self.initial_angle = np.random.randint(0, 360)
+
+        # self.rect.center
+        self.recalculate_position()
+
+    def recalculate_position(self):
+        initial_pos = (self.orbit_c[0] + self.orbit_r * np.cos(np.deg2rad(self.initial_angle)),
+                       self.orbit_c[1] + self.orbit_r * np.sin(np.deg2rad(self.initial_angle)))
+        self.rect.center = initial_pos
+        # return initial_pos
+
+    def update(self, *args):
+        # make it slower!!!.
+        if self.frame_skipper < self.frame_skipper_max:
+            self.frame_skipper += 1
+            return
+        else:
+            self.frame_skipper = 0
+
+        self.initial_angle += 1
+        self.recalculate_position()
+
+        # angle = self.game.wind.current_angle
+
+    def draw(self):
+        self.game.screen.blit(self.image, self.game.camera.apply(self))
+
