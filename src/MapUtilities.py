@@ -57,8 +57,6 @@ class MapGenerator:
         # add mountains ONLY to the land:
         pixel_map = land + land * mountains
 
-        #surf = pg.surfarray.make_surface(Z)
-
         height_in_tiles_numbers = rows
         width_in_tiles_numbers = columns
         height_in_pix = height_in_tiles_numbers * TILEHEIGHT
@@ -151,15 +149,28 @@ class MapGenerator:
 
         return mountains
 
+    @staticmethod
+    def generate_minimap(tile_dict, rows, cols):
+        rgb = np.zeros((cols, rows, 3), dtype=np.uint8)
+        rgb[:, :, :] = [50, 80, 255] # all set to blue
+        # populate colors:
+        for k, tile in tile_dict.items():
+            if tile.type == 'land':
+                color = [0, 255, 0]
+                rgb[tile.c, tile.r, :] = color
+            elif tile.type == 'mountain':
+                color = [120, 120, 120]
+                rgb[tile.c, tile.r, :] = color
+        mini_map = pg.surfarray.make_surface(rgb)
+        return mini_map
+
 
 class Map:
     def __init__(self, game):
         self.game = game
         #map_info = MapGenerator.generate_from_txt(game)
-        map_info = MapGenerator.generate_from_numpy(game, 100, 100)
+        map_info = MapGenerator.generate_from_numpy(game, MAP_TILE_H, MAP_TILE_W)
         self.tiles_dict = map_info.tile_dict
-
-        # TODO: minimap = pg.Surface()
 
         self.tilewidth = map_info.width_in_tile_numbers
         self.tileheight = map_info.height_in_tile_numbers
@@ -184,11 +195,9 @@ class Tile(pg.sprite.Sprite):
         elif self.type == 'land':
             self.image = self.game.image_manager.land
         elif self.type == 'mountain':
-            self.image = self.game.image_manager.land
-            self.image.blit(self.game.image_manager.mountain, (0, 0))
+            self.image = self.game.image_manager.mountain
 
         self.rect = self.image.get_rect()
-
         self.c = col
         self.r = row
         self.rc_str = str(self.r) + ', ' + str(self.c)
@@ -212,42 +221,8 @@ class Tile(pg.sprite.Sprite):
             y = r * 1.5 * ry
         return x, y
 
-
-class Camera:
-    def __init__(self, width, height):
-        self.rect = pg.Rect(0, 0, width, height)
-        self.width = width
-        self.height = height
-        self.speed = CAMERA_SPEED
-
-    # def apply(self, target):
-    #     return target.rect.move(self.camera.topleft)
-
-    def apply(self, target):
-        return target.rect.move(self.rect.topleft)
-
-    def update(self, x, y):
-        # def update(self, target):
-        #     x = -target.rect.x + int(WIDTH/2)
-        #     y = -target.rect.y + int(HEIGHT/2)
-        #     self.camera = pg.Rect(x, y, self.width, self.height)
-
-        # same as old, but directly with x and y; this is more flexible than "target.rect.x"
-        x_shifted = - x + int(WIDTH / 2)
-        y_shifted = - y + int(HEIGHT / 2)
-        self.rect = pg.Rect(x_shifted, y_shifted, self.width, self.height)
-
-    def move_left(self):
-        self.rect.x += self.speed
-
-    def move_right(self):
-        self.rect.x -= self.speed
-
-    def move_up(self):
-        self.rect.y += self.speed
-
-    def move_down(self):
-        self.rect.y -= self.speed
+    def __str__(self):
+        return 'Tile: ' + self.type + '; r.c = ' + self.rc_str
 
 
 class Wind:
@@ -323,16 +298,16 @@ class Seagull(pg.sprite.Sprite):
         self.orbit_r = np.random.randint(0, 200)
         self.orbit_c = (np.random.randint(0, self.game.map.width),
                         np.random.randint(0, self.game.map.height))
-        self.initial_angle = np.random.randint(0, 360)
-
+        self.orbit_angle = 0#np.random.randint(0, 360)
+        self.orientation_angle = 0  # seagull looks upwards: --^--
         # self.rect.center
         self.recalculate_position()
 
     def recalculate_position(self):
-        initial_pos = (self.orbit_c[0] + self.orbit_r * np.cos(np.deg2rad(self.initial_angle)),
-                       self.orbit_c[1] + self.orbit_r * np.sin(np.deg2rad(self.initial_angle)))
-        self.rect.center = initial_pos
-        # return initial_pos
+        # angle = self.game.wind.current_angle
+        cur_pos = (self.orbit_c[0] + self.orbit_r * np.cos(np.deg2rad(self.orbit_angle)),
+                       self.orbit_c[1] + self.orbit_r * np.sin(np.deg2rad(self.orbit_angle)))
+        self.rect.center = cur_pos
 
     def update(self, *args):
         # make it slower!!!.
@@ -342,10 +317,13 @@ class Seagull(pg.sprite.Sprite):
         else:
             self.frame_skipper = 0
 
-        self.initial_angle += 1
+        self.orientation_angle += 1
+        self.orbit_angle -= 1
         self.recalculate_position()
 
-        # angle = self.game.wind.current_angle
+        self.image = pg.transform.rotate(self.game.image_manager.seagull, self.orientation_angle)
+        #self.rect = self.image.get_rect()
+
 
     def draw(self):
         self.game.screen.blit(self.image, self.game.camera.apply(self))

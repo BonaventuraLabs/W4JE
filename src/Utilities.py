@@ -26,7 +26,10 @@ class ImageManager:
         self.land = pg.transform.scale(land, (TILEWIDTH, TILEHEIGHT))
 
         mountain = ImageManager.load(TILE_MOUNTAIN_IMAGE)
-        self.mountain = pg.transform.scale(mountain, (TILEWIDTH, TILEHEIGHT))
+        # put mountains onto the land:
+        land_base = land#.copy()
+        land_base.blit(mountain, (0, 0))
+        self.mountain = pg.transform.scale(land_base, (TILEWIDTH, TILEHEIGHT))
 
         ship = ImageManager.load(SHIP)
         self.ship = pg.transform.scale(ship, (TILEWIDTH, TILEHEIGHT))

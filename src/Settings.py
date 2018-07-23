@@ -5,6 +5,8 @@ TITLE = 'W4JE'
 
 WIDTH = 800
 HEIGHT = 600
+MAP_TILE_H = 50
+MAP_TILE_W = 100
 
 CAMERA_SPEED = 15 #pix
 HUD_HEIGHT = 80
@@ -25,3 +27,6 @@ TILER = TILEHEIGHT/2 # for vertical hexagons
 TILECOLORKEY = (0, 0, 0) # alpha channel?...
 
 FPS = 60
+
+SEAGULL_COUNT = 200
+CLOUD_COUNT = 200

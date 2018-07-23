@@ -1,5 +1,6 @@
 import pygame as pg
 from src.Settings import *
+from src.MapUtilities import MapGenerator
 
 
 class Hud:
@@ -9,12 +10,14 @@ class Hud:
         self.compass = Compass(game)
         self.wind_arrow = WindArrow(game)
         self.turn_message = TurnMessage(game)
+        self.minimap = Minimap(game)
 
     def draw(self):
         self.scroll.draw()
         self.compass.draw()
         self.wind_arrow.draw()
         self.turn_message.draw()
+        self.minimap.draw()
 
     def update(self):
         pass
@@ -63,7 +66,12 @@ class WindArrow(pg.sprite.Sprite):
         self.rect.center = self.fixed_position
 
     def update(self, *args):
-        pass#self.get_new_direction()
+        angle = self.game.wind.current_angle
+        # self.game.wind.directions[self.game.wind.current_direction]
+        # use ONLY the stock image for rotation.
+        self.image = pg.transform.rotate(self.game.image_manager.wind_arrow, angle)
+        self.rect = self.image.get_rect()
+        self.rect.center = self.fixed_position
 
     def show_text(self):
         text = 'Wind strength: ' + str(self.game.wind.current_strength)
@@ -73,12 +81,6 @@ class WindArrow(pg.sprite.Sprite):
         self.game.screen.blit(label, label_rect)
 
     def draw(self):
-        angle = self.game.wind.current_angle
-        # self.game.wind.directions[self.game.wind.current_direction]
-        # use ONLY the stock image for rotation.
-        self.image = pg.transform.rotate(self.game.image_manager.wind_arrow, angle)
-        self.rect = self.image.get_rect()
-        self.rect.center = self.fixed_position
         self.game.screen.blit(self.image, self.rect)
         self.show_text()
 
@@ -101,3 +103,57 @@ class TurnMessage:
         label = self.game.font.render(text, True, BLACK)
         label_rect = label.get_rect(center=(100, HEIGHT / 2 + 20))
         self.game.screen.blit(label, label_rect)
+
+
+class Minimap:
+    def __init__(self, game):
+        self.game = game
+        image = MapGenerator.generate_minimap(self.game.map.tiles_dict,
+                                              self.game.map.tileheight,
+                                              self.game.map.tilewidth)
+        target_width = 120
+        target_height = int(image.get_rect().h / image.get_rect().w * target_width)
+        self.image = pg.transform.scale(image, (target_width, target_height))
+        self.rect = self.image.get_rect()
+        self.rect.center = (100, 420)
+
+    def draw(self):
+        self.game.screen.blit(self.image, self.rect)
+
+
+
+class Camera:
+    def __init__(self, width, height):
+        self.rect = pg.Rect(0, 0, width, height)
+        self.width = width
+        self.height = height
+        self.speed = CAMERA_SPEED
+
+    # def apply(self, target):
+    #     return target.rect.move(self.camera.topleft)
+
+    def apply(self, target):
+        return target.rect.move(self.rect.topleft)
+
+    def update(self, x, y):
+        # def update(self, target):
+        #     x = -target.rect.x + int(WIDTH/2)
+        #     y = -target.rect.y + int(HEIGHT/2)
+        #     self.camera = pg.Rect(x, y, self.width, self.height)
+
+        # same as old, but directly with x and y; this is more flexible than "target.rect.x"
+        x_shifted = - x + int(WIDTH / 2)
+        y_shifted = - y + int(HEIGHT / 2)
+        self.rect = pg.Rect(x_shifted, y_shifted, self.width, self.height)
+
+    def move_left(self):
+        self.rect.x += self.speed
+
+    def move_right(self):
+        self.rect.x -= self.speed
+
+    def move_up(self):
+        self.rect.y += self.speed
+
+    def move_down(self):
+        self.rect.y -= self.speed

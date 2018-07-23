@@ -33,10 +33,18 @@ class EventManager:
                     self.game.camera.move_down()
 
             # switch dragging on-off
-            if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 self.game.rmb_drag = True
                 self.game.rmb_dag_xy = pg.mouse.get_pos()
 
-            elif event.type == pg.MOUSEBUTTONUP and event.button == 3:
+            elif event.type == pg.MOUSEBUTTONUP and event.button == 1:
                 self.game.rmb_drag = False
+
+            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
+                print('--- testing rmb ----')
+                m_pos = [a-b for a,b in zip(pg.mouse.get_pos(), self.game.camera.rect.topleft)]
+                m_pos_corr = m_pos # correct by camera shift!
+                for k, tile in self.game.map.tiles_dict.items():
+                    if tile.rect.collidepoint(m_pos_corr):
+                        print(tile)
 

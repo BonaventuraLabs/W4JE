@@ -2,13 +2,16 @@ import sys
 from collections import deque
 import pygame as pg
 from src.Settings import *
-from src.Hud import Hud
+from src.Hud import Hud, Camera
 from src.Utilities import ImageManager
-from src.MapUtilities import Map, Camera, Wind, Cloud, Seagull
+from src.MapUtilities import Map, Wind, Cloud, Seagull
 from src.Units import Ship
 from src.EventManagers import EventManager
 
 
+# TODO: where to keep instance images?
+# If tiles have the same image, then we probably dont need to instantiate it for each tile.
+# It will be waste of memory, since it's one same image. Instead, we should keep it as a static image of a class?
 class Game:
     def __init__(self):
         # init and create window
@@ -33,10 +36,10 @@ class Game:
         self.hud = Hud(self)
         self.camera = Camera(self.map.width, self.map.height)
         self.clouds = []
-        for i in range(0, 200):
+        for i in range(0, CLOUD_COUNT):
             self.clouds.append(Cloud(self))
         self.seagulls = []
-        for i in range(0, 200):
+        for i in range(0, SEAGULL_COUNT):
             self.seagulls.append(Seagull(self))
 
         self.player_deque = deque([Ship(self, 10, 10, 'Dimas', YELLOW),
