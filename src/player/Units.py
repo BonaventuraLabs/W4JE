@@ -1,8 +1,14 @@
 import pygame as pg
-from src.Settings import *
+from src.utilities.settings import *
 import numpy as np
-from collections import namedtuple
+
 vec = pg.math.Vector2
+
+
+class Castle:
+    def __init__(self, game, player):
+        self.game = game
+        self.player = player
 
 
 class Aura(pg.sprite.Sprite):
@@ -33,8 +39,9 @@ class Aura(pg.sprite.Sprite):
         r1 = int(TILEWIDTH * 0.75)
         r2 = int(TILEWIDTH * 0.95)
         thickness = 3
-        pg.draw.circle(sel_surf, self.owner.color, center, r1, 0)
-        pg.draw.circle(sel_surf, self.owner.color, center, r2, thickness)
+        color = self.owner.player.color#LIGHTGREY
+        pg.draw.circle(sel_surf, color, center, r1, 0)
+        pg.draw.circle(sel_surf, color, center, r2, thickness)
         return sel_surf
 
     def set_center(self, xy):
@@ -55,11 +62,10 @@ class Aura(pg.sprite.Sprite):
 
 
 class Ship(pg.sprite.Sprite):
-    def __init__(self, game, row, col, name, color):
+    def __init__(self, game, player, row, col):
+        self.player = player
         self.groups = game.sprites_unit, game.sprites_anim
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.name = name
-        self.color = color
         self.game = game
         self.image = self.game.image_manager.ship
         self.aura = Aura(self)
@@ -72,20 +78,7 @@ class Ship(pg.sprite.Sprite):
         self.c_prev = col
         self.xy_prev = self.xy[:]
         self.rect.center = self.xy
-        self.is_done = True  # not his turn at creation
-        self.is_current = False
-        self.moved = False
         self.moving_anim_on = False
-
-    def set_current(self):
-        self.is_done = False
-        self.is_current = True
-        self.recalc_center()
-        self.game.camera.update(self.rect.x, self.rect.y)
-
-    def unset_current(self):
-        self.is_done = True
-        self.is_current = False
 
     def recalc_center(self):
         self.r_prev = self.r
@@ -119,13 +112,13 @@ class Ship(pg.sprite.Sprite):
         #print(self.xy)
 
     def draw(self):
-        if self.is_current:
+        if self.player.is_current:
             self.game.screen.blit(self.aura.image, self.game.camera.apply(self.aura))
         self.game.screen.blit(self.image, self.game.camera.apply(self))
-        self.game.screen.blit(self.get_label(), self.game.camera.apply(self))
+        self.game.screen.blit(self.get_name_label(), self.game.camera.apply(self))
 
-    def get_label(self):
-        text = self.name
+    def get_name_label(self):
+        text = self.player.name
         label = self.game.font.render(text, True, BLACK)
         label.get_rect().center = self.rect.center
         label.get_rect().bottom = self.rect.bottom
@@ -161,10 +154,10 @@ class Ship(pg.sprite.Sprite):
                 self.moving_anim_on = False
                 self.rect.center = self.xy
                 self.aura.set_center(self.xy)
-                self.unset_current()
+                self.player.unset_current()
 
         # shuffle aura
-        if self.is_current:
+        if self.player.is_current:
             self.aura.update()
 
     def check_what_in_target_tile(self):
@@ -183,7 +176,6 @@ class Ship(pg.sprite.Sprite):
             self.move_lu()
         elif event_key == pg.K_KP9:
             self.move_ru()
-
 
     def move_l(self):
         self.check_what_in_target_tile()

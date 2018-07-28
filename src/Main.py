@@ -1,13 +1,16 @@
 import sys
 from collections import deque
 import pygame as pg
-from src.Settings import *
-from src.Hud import Hud, Camera
-from src.Utilities import ImageManager
-from src.MapUtilities import Map, Wind, Cloud, Seagull
-from src.Units import Ship
-from src.EventManagers import EventManager
+from src.utilities.settings import *
+from src.hud.Hud import Hud, Camera
+from src.utilities.image_manager import ImageManager
+from src.map.map import Map
+from src.map.atmosphere import Atmosphere
 
+from src.eventmanager.EventManagers import EventManager
+from src.player.PlayerUtilities import Player
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# from .context import sample
 
 # TODO: where to keep instance images?
 # If tiles have the same image, then we probably dont need to instantiate it for each tile.
@@ -32,19 +35,13 @@ class Game:
 
         self.event_manager = EventManager(self)
         self.map = Map(self)
-        self.wind = Wind(self)
         self.hud = Hud(self)
+        self.atmosphere = Atmosphere(self)
         self.camera = Camera(self.map.width, self.map.height)
-        self.clouds = []
-        for i in range(0, CLOUD_COUNT):
-            self.clouds.append(Cloud(self))
-        self.seagulls = []
-        for i in range(0, SEAGULL_COUNT):
-            self.seagulls.append(Seagull(self))
 
-        self.player_deque = deque([Ship(self, 10, 10, 'Dimas', YELLOW),
-                                  Ship(self, 12, 12, 'Alex', RED),
-                                  Ship(self, 15, 15, 'Danila', GREEN)])
+        self.player_deque = deque([Player(self, 'Dimas', YELLOW),
+                                  Player(self, 'Alex', RED),
+                                  Player(self, 'Danila', GREEN)])
 
         self.current_player = self.player_deque[0]
         self.current_player.set_current()
@@ -52,8 +49,8 @@ class Game:
         self.playing = True
         self.turn_finished = False
 
-        self.rmb_drag = False  # Right mouse button
-        self.rmb_dag_xy = self.current_player.xy
+        self.mouse_drag = False  #  mouse button
+        self.mouse_drag_xy = self.current_player.ship.xy
 
     def run(self):
         while self.playing:
@@ -82,20 +79,20 @@ class Game:
     def update_animation(self):
         self.sprites_anim.update()
 
-        if self.rmb_drag:
+        if self.mouse_drag:
             xy = pg.mouse.get_pos()
             # print('-------')
             # print(xy)
-            delta_x = self.rmb_dag_xy[0] - xy[0]
-            delta_y = self.rmb_dag_xy[1] - xy[1]
+            delta_x = self.mouse_drag_xy[0] - xy[0]
+            delta_y = self.mouse_drag_xy[1] - xy[1]
             # print(delta_x)
 
-            self.rmb_dag_xy = xy
-            # print(self.rmb_dag_xy)
+            self.mouse_drag_xy = xy
+            # print(self.mouse_drag_xy)
             self.camera.rect.x -= delta_x
             self.camera.rect.y -= delta_y
         else:
-            # self.rmb_dag_xy
+            # self.mouse_drag_xy
             pass
 
     def draw(self):
@@ -104,17 +101,12 @@ class Game:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         for sprite in self.sprites_unit:
             sprite.draw()
-        for seagull in self.seagulls:
-            seagull.draw()
-        for cloud in self.clouds:
-            cloud.draw()
-        # for sprite in self.sprites_hud:
-        #     self.screen.blit(sprite.image, sprite)
+        self.atmosphere.draw()
         self.hud.draw()
         pg.display.flip()
 
     def update_state_on_turn(self):
-        self.wind.get_new_direction()
+        self.atmosphere.wind.get_new_direction()
 
     def show_start_screen(self):
         pass

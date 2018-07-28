@@ -16,11 +16,11 @@ class EventManager:
                     self.game.quit()
                 # Unit movement
                 elif event.key in [pg.K_KP1, pg.K_KP3, pg.K_KP4, pg.K_KP6, pg.K_KP7, pg.K_KP9]:
-                    self.game.current_player.move(event.key)
+                    self.game.current_player.ship.move(event.key)
                 # center camera on player
                 elif event.key == pg.K_KP5:
-                    self.game.camera.update(self.game.current_player.rect.x,
-                                            self.game.current_player.rect.y)
+                    self.game.camera.update(self.game.current_player.ship.rect.x,
+                                            self.game.current_player.ship.rect.y)
 
                 # Camera:
                 elif event.key == pg.K_LEFT:
@@ -34,11 +34,11 @@ class EventManager:
 
             # switch dragging on-off
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
-                self.game.rmb_drag = True
-                self.game.rmb_dag_xy = pg.mouse.get_pos()
+                self.game.mouse_drag = True
+                self.game.mouse_drag_xy = pg.mouse.get_pos()
 
             elif event.type == pg.MOUSEBUTTONUP and event.button == 1:
-                self.game.rmb_drag = False
+                self.game.mouse_drag = False
 
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
                 print('--- testing rmb ----')

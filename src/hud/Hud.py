@@ -1,6 +1,6 @@
 import pygame as pg
-from src.Settings import *
-from src.MapUtilities import MapGenerator
+from src.utilities.settings import *
+from src.map.map import MapGenerator
 
 
 class Hud:
@@ -66,7 +66,7 @@ class WindArrow(pg.sprite.Sprite):
         self.rect.center = self.fixed_position
 
     def update(self, *args):
-        angle = self.game.wind.current_angle
+        angle = self.game.atmosphere.wind.current_angle
         # self.game.wind.directions[self.game.wind.current_direction]
         # use ONLY the stock image for rotation.
         self.image = pg.transform.rotate(self.game.image_manager.wind_arrow, angle)
@@ -74,7 +74,7 @@ class WindArrow(pg.sprite.Sprite):
         self.rect.center = self.fixed_position
 
     def show_text(self):
-        text = 'Wind strength: ' + str(self.game.wind.current_strength)
+        text = 'Wind strength: ' + str(self.game.atmosphere.wind.current_strength)
         label = self.game.font.render(text, True, BLACK)
         label_rect = label.get_rect()
         label_rect.topleft = self.game.hud.compass.rect.topleft
@@ -99,7 +99,7 @@ class TurnMessage:
         label_rect = label.get_rect(center=(100, HEIGHT / 2))
         self.game.screen.blit(label, label_rect)
 
-        text = 'Coordinates: ' + str(self.game.current_player.r) + '-' + str(self.game.current_player.c)
+        text = 'Coordinates: ' + str(self.game.current_player.ship.r) + '-' + str(self.game.current_player.ship.c)
         label = self.game.font.render(text, True, BLACK)
         label_rect = label.get_rect(center=(100, HEIGHT / 2 + 20))
         self.game.screen.blit(label, label_rect)
