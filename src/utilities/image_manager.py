@@ -9,6 +9,9 @@ class ImageManager:
         sea = ImageManager.load(TILE_SEA_IMAGE)
         self.sea = pg.transform.scale(sea, (TILEWIDTH, TILEHEIGHT))
 
+        sand = ImageManager.load(TILE_SAND_IMAGE)
+        self.sand = pg.transform.scale(sand, (TILEWIDTH, TILEHEIGHT))
+
         land = ImageManager.load(TILE_LAND_IMAGE)
         self.land = pg.transform.scale(land, (TILEWIDTH, TILEHEIGHT))
 
@@ -32,6 +35,9 @@ class ImageManager:
 
         seagull = ImageManager.load(SEAGULL)
         self.seagull = pg.transform.scale(seagull, (40, 20))
+
+        castle = ImageManager.load(CASTLE)
+        self.castle = pg.transform.scale(castle, (3*TILEWIDTH, 3*TILEHEIGHT))
 
         self.cloud_list = ImageManager.load_cloud_list()
 

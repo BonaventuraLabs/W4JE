@@ -27,14 +27,15 @@ class Cloud(pg.sprite.Sprite):
         self.rect.x += strength * np.cos(np.deg2rad(90 + angle))
         self.rect.y -= strength * np.sin(np.deg2rad(90 + angle))
 
+        # TODO: make slow dissolving? Opacity as a function of distance to edge, then translate as below:
         if self.rect.left > self.game.map.width:
             self.rect.right = 0
         if self.rect.right < 0:
             self.rect.left = self.game.map.width
+        if self.rect.bottom < 0:
+            self.rect.top = self.game.map.height
         if self.rect.top > self.game.map.height:
             self.rect.bottom = 0
-        if self.rect.bottom > self.game.map.height:
-            self.rect.top = self.game.map.height
 
     def draw(self):
         self.game.screen.blit(self.image, self.game.camera.apply(self))

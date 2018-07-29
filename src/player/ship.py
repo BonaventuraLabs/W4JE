@@ -1,72 +1,15 @@
-import pygame as pg
-from src.utilities.settings import *
 import numpy as np
-
-vec = pg.math.Vector2
-
-
-class Castle:
-    def __init__(self, game, player):
-        self.game = game
-        self.player = player
-
-
-class Aura(pg.sprite.Sprite):
-    def __init__(self, owner):
-        self.groups = owner.game.sprites_anim
-        pg.sprite.Sprite.__init__(self, self.groups)
-        self.owner = owner
-        self.image = self.generate_image()
-        # proper position:
-        self.rect = self.image.get_rect()
-
-        self.image_fixed = self.image.copy()
-        self.rect_fixed = self.rect.copy()
-
-        self.phase_speed = 0.001
-        self.phase_min = 0.75
-        self.phase_max = 1
-        self.phase = self.phase_max
-        self.phase_change = -self.phase_speed
-
-    def generate_image(self):
-        # square surface, 2*tile:
-        w = 2 * TILEWIDTH
-        sel_surf = pg.Surface((w, w), pg.SRCALPHA, 32).convert_alpha()
-
-        # draw circle in the center of this surface:
-        center = (int(TILEWIDTH), int(TILEWIDTH))
-        r1 = int(TILEWIDTH * 0.75)
-        r2 = int(TILEWIDTH * 0.95)
-        thickness = 3
-        color = self.owner.player.color#LIGHTGREY
-        pg.draw.circle(sel_surf, color, center, r1, 0)
-        pg.draw.circle(sel_surf, color, center, r2, thickness)
-        return sel_surf
-
-    def set_center(self, xy):
-        self.rect.center = xy
-
-    def update(self):
-        # oscillating (triangle oscillator) of the phase between phase_min and max:
-        if self.phase >= self.phase_max:
-            self.phase_change = -self.phase_speed
-        if self.phase <= self.phase_min:
-            self.phase_change = +self.phase_speed
-        self.phase += self.phase_change
-        new_w = int(self.rect_fixed.w * self.phase)
-        new_h = int(self.rect_fixed.h * self.phase)
-        self.image = pg.transform.scale(self.image_fixed, (new_w, new_h))
-        self.rect = self.image.get_rect()
-        self.rect.center = self.owner.xy
+from src.utilities.settings import *
+from src.player.aura import Aura
+import pygame as pg
 
 
 class Ship(pg.sprite.Sprite):
     def __init__(self, game, player, row, col):
-        self.player = player
-        self.groups = game.sprites_unit, game.sprites_anim
-        pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
+        self.player = player
+        self.groups = self.game.sprites_unit, self.game.sprites_anim
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.image = self.game.image_manager.ship
         self.aura = Aura(self)
         self.rect = self.image.get_rect()
@@ -84,20 +27,7 @@ class Ship(pg.sprite.Sprite):
         self.r_prev = self.r
         self.c_prev = self.c
         self.xy_prev = self.xy
-
-        # bounding box of a tile:
-        rx = TILER * np.cos(np.pi / 6)
-        ry = TILER
-
-        # real coordinates on map;
-        # shift to right each 2nd row
-        if self.r % 2 == 0:
-            x = self.c * 2 * rx
-            y = self.r * 1.5 * ry
-        else:
-            x = self.c * 2 * rx + rx  # here we shift to right.
-            y = self.r * 1.5 * ry
-        self.xy = [x, y]
+        self.xy = self.game.map.rc_to_xy(self.r, self.c)
         self.rect.center = self.xy
         self.aura.set_center(self.xy)
 

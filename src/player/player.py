@@ -1,17 +1,19 @@
 import numpy as np
-from src.player.Units import Ship, Castle
+from src.player.ship import Ship
+from src.player.castle import Castle
 from src.utilities.settings import *
+
 
 class Player:
     def __init__(self, game, name, color):
         self.game = game
-        self.color = color#np.random.randint(0, 255, size=(1, 3))
+        self.color = color
         self.name = name
         self.turn_finished = False
         row = np.random.randint(0, MAP_TILE_H)
         col = np.random.randint(0, MAP_TILE_W)
+        self.castle = Castle(game, self, row, col)
         self.ship = Ship(game, self, row, col)
-        self.castle = Castle(game, self)
         self.is_done = True  # not his turn at creation
         self.is_current = False
         self.moved = False

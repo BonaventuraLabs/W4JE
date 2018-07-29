@@ -2,13 +2,15 @@ import sys
 from collections import deque
 import pygame as pg
 from src.utilities.settings import *
-from src.hud.Hud import Hud, Camera
+from src.hud.hud import Hud
+from src.hud.camera import Camera
 from src.utilities.image_manager import ImageManager
 from src.map.map import Map
 from src.map.atmosphere import Atmosphere
+from src.eventmanager.event_manager import EventManager
+from src.player.player import Player
+from src.player.turn_manager import TurnManager
 
-from src.eventmanager.EventManagers import EventManager
-from src.player.PlayerUtilities import Player
 # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # from .context import sample
 
@@ -31,7 +33,8 @@ class Game:
         self.sprites_anim = pg.sprite.Group()
         self.sprites_unit = pg.sprite.Group()
         self.sprites_map = pg.sprite.Group()
-        self.sprites_hud = pg.sprite.Group()
+        # self.sprites_hud = pg.sprite.Group()
+        self.sprites_menu = pg.sprite.Group()
 
         self.event_manager = EventManager(self)
         self.map = Map(self)
@@ -39,18 +42,19 @@ class Game:
         self.atmosphere = Atmosphere(self)
         self.camera = Camera(self.map.width, self.map.height)
 
+        # self.turn_manager = TurnManager(self)
+
         self.player_deque = deque([Player(self, 'Dimas', YELLOW),
                                   Player(self, 'Alex', RED),
                                   Player(self, 'Danila', GREEN)])
 
         self.current_player = self.player_deque[0]
         self.current_player.set_current()
-
-        self.playing = True
         self.turn_finished = False
 
-        self.mouse_drag = False  #  mouse button
+        self.mouse_drag = False
         self.mouse_drag_xy = self.current_player.ship.xy
+        self.playing = True
 
     def run(self):
         while self.playing:
@@ -97,8 +101,7 @@ class Game:
 
     def draw(self):
         self.screen.fill(BLACK)
-        for sprite in self.sprites_map:
-            self.screen.blit(sprite.image, self.camera.apply(sprite))
+        self.map.draw()
         for sprite in self.sprites_unit:
             sprite.draw()
         self.atmosphere.draw()

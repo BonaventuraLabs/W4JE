@@ -33,18 +33,28 @@ class EventManager:
                     self.game.camera.move_down()
 
             # switch dragging on-off
-            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
                 self.game.mouse_drag = True
                 self.game.mouse_drag_xy = pg.mouse.get_pos()
 
-            elif event.type == pg.MOUSEBUTTONUP and event.button == 1:
+            elif event.type == pg.MOUSEBUTTONUP and event.button == 3:
                 self.game.mouse_drag = False
 
-            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
-                print('--- testing rmb ----')
-                m_pos = [a-b for a,b in zip(pg.mouse.get_pos(), self.game.camera.rect.topleft)]
-                m_pos_corr = m_pos # correct by camera shift!
-                for k, tile in self.game.map.tiles_dict.items():
-                    if tile.rect.collidepoint(m_pos_corr):
-                        print(tile)
+            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                click_screen_xy = pg.mouse.get_pos()
+                # to convert screen coordinates to map coordinates, we need to apply camera shift.
+                # shift the screen click coordinates by the Camera offset:
+                shift_xy = self.game.camera.rect.topleft
+                click_map_xy = [cl-sh for cl, sh in zip(click_screen_xy, shift_xy)]
+
+                # test HUD? test by SCREEN COORDINATES
+                clicked_item = self.game.hud.get_clicked(click_screen_xy)
+
+                # test map?  test by MAP COORDINATES
+                if clicked_item is None:
+                    clicked_item = self.game.map.get_clicked(click_map_xy)
+
+                # print(clicked_item)
+
+
 
