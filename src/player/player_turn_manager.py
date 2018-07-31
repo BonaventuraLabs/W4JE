@@ -6,6 +6,7 @@ import pygame as pg
 
 class PlayerTurnManager:
 
+    # TODO: show this counter somewherein hud
     global_turn_count = 1
 
     def __init__(self, game):

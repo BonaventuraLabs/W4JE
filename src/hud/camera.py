@@ -13,7 +13,13 @@ class Camera:
     #     return target.rect.move(self.camera.topleft)
 
     def apply(self, target):
-        return target.rect.move(self.rect.topleft)
+        if hasattr(target, 'rect'):
+            rect = target.rect
+        elif hasattr(target, 'get_rect'):
+            rect = target.get_rect()
+        elif isinstance(target, pg.Rect):
+            rect = target
+        return rect.move(self.rect.topleft)
 
     def update(self, x, y):
         # def update(self, target):

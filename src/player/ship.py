@@ -53,14 +53,16 @@ class Ship(pg.sprite.Sprite):
         if self.player.is_current:
             self.game.screen.blit(self.aura.image, self.game.camera.apply(self.aura))
         self.game.screen.blit(self.image, self.game.camera.apply(self))
-        self.game.screen.blit(self.get_name_label(), self.game.camera.apply(self))
+        label, label_rect = self.get_name_label()
+        self.game.screen.blit(label, self.game.camera.apply(label_rect))
 
     def get_name_label(self):
         text = self.player.name
-        label = self.game.font.render(text, True, BLACK)
-        label.get_rect().center = self.rect.center
-        label.get_rect().bottom = self.rect.bottom
-        return label
+        label = self.game.font.render(text, True, WHITE)
+        label_rect = label.get_rect()
+        label_rect.center = self.rect.center
+        label_rect.bottom = self.rect.bottom
+        return label, label_rect
 
     def update(self, *args):
 
