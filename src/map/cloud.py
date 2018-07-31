@@ -3,9 +3,9 @@ import pygame as pg
 
 
 class Cloud(pg.sprite.Sprite):
-    def __init__(self, game):
-        self.game = game
-        self.groups = self.game.sprites_anim
+    def __init__(self, atmosphere):
+        self.game = atmosphere.game
+        self.groups = atmosphere.sprites_atmosphere
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = np.random.choice(self.game.image_manager.cloud_list)
         self.rect = self.image.get_rect()

@@ -1,56 +1,14 @@
 from src.utilities.settings import *
 from src.map.tile import Tile
-from collections import namedtuple
 import numpy as np
 from skimage import filters, feature
 import pygame as pg
-import matplotlib.pyplot as plt
 
 
 class MapGenerator:
 
     @staticmethod
-    def generate_from_txt(game):
-        file_path = os.path.join(FOLDER_RESOURCES, 'map_1.txt')
-        data = []
-        with open(file_path, 'rt') as f:
-            for line in f:
-                data.append(line)
-
-        # TODO: wrong. height in pix is not N*y, because the tiles are shifted. Works so far.
-        height_in_tiles_numbers = len(data)
-        width_in_tiles_numbers = len(data[0])
-        height_in_pix = height_in_tiles_numbers * TILEHEIGHT
-        width_in_pix = width_in_tiles_numbers * TILEWIDTH
-
-        tile_dict = {}
-        for row, tiles in enumerate(data):
-            for col, el in enumerate(tiles):
-                if el == '1':
-                    tile_type = 'land'
-                elif el == '.':
-                    tile_type = 'sea'
-                # elif el == 'P':
-                #     self.game.ship = Ship(self.game, row, col)
-                else:
-                    tile_type = 'sea'
-
-                # generate a tile:
-                tile_dict[str(row) + '.' + str(col)] = Tile(game, row, col, tile_type)
-
-        MapInfo = namedtuple('MapInfo',
-                             ['tile_dict', 'width_in_tile_numbers', 'height_in_tile_numbers',
-                             'height_in_pix', 'width_in_pix'])
-
-        map_info = MapInfo(tile_dict=tile_dict,
-                           width_in_tile_numbers=width_in_tiles_numbers,
-                           height_in_tile_numbers=height_in_tiles_numbers,
-                           height_in_pix=height_in_pix,
-                           width_in_pix=width_in_pix)
-        return map_info
-
-    @staticmethod
-    def generate_from_numpy(game, rows, columns):
+    def generate_from_numpy(game, sprites_group, rows, columns):
 
         land_bool_map = MapGenerator.generate_land(rows, columns)
         mountains_bool_map = MapGenerator.generate_mountains(rows, columns)
@@ -58,35 +16,23 @@ class MapGenerator:
         # the coastal line will be calculated as edges of land:
         # 255 is necessary, since the gradient 1->0 is too weak. 255->0 is stringer edge.
 
-        pixel_map = np.zeros((rows, columns), dtype=np.uint8)
-        pixel_map[land_bool_map] = TILE_TYPE_DICT['land']
-        pixel_map[coast_bool_map] = TILE_TYPE_DICT['sand']
-        pixel_map[mountains_bool_map] = TILE_TYPE_DICT['mountain']
+        number_map = np.zeros((rows, columns), dtype=np.uint8)
+        number_map[land_bool_map] = TILE_TYPE_DICT['land']
+        number_map[coast_bool_map] = TILE_TYPE_DICT['sand']
+        number_map[mountains_bool_map] = TILE_TYPE_DICT['mountain']
 
-        height_in_tiles_numbers = rows
-        width_in_tiles_numbers = columns
-        height_in_pix = height_in_tiles_numbers * TILEHEIGHT
-        width_in_pix = width_in_tiles_numbers * TILEWIDTH
+        return MapGenerator.generate_tiles(game, sprites_group, number_map)
 
+    @staticmethod
+    def generate_tiles(game, sprites_group, number_map):
         tile_dict = {}
-        # the keys will be coordinates r.c (e.g. '1.2' or '23.49')
-        for row in range(0, rows):
-            for col in range(0, columns):
-                el = pixel_map[row, col]
+        for row in range(0, number_map.shape[0]):
+            for col in range(0, number_map.shape[1]):
+                el = number_map[row, col]
                 tile_type = TILE_TYPE_DICT[el]
                 # generate a tile:
-                tile_dict[str(row) + '.' + str(col)] = Tile(game, row, col, tile_type)
-
-        MapInfo = namedtuple('MapInfo',
-                             ['tile_dict', 'width_in_tile_numbers', 'height_in_tile_numbers',
-                              'height_in_pix', 'width_in_pix'])
-
-        map_info = MapInfo(tile_dict=tile_dict,
-                           width_in_tile_numbers=width_in_tiles_numbers,
-                           height_in_tile_numbers=height_in_tiles_numbers,
-                           height_in_pix=height_in_pix,
-                           width_in_pix=width_in_pix)
-        return map_info
+                tile_dict[str(row) + '.' + str(col)] = Tile(game, sprites_group, row, col, tile_type)
+        return tile_dict
 
     @staticmethod
     def generate_land(height, width):
@@ -144,6 +90,7 @@ class MapGenerator:
         # make it TrueFalse map:
         return mountains > 0.7 * mountains.mean()
 
+
     @staticmethod
     def generate_minimap(tile_dict, rows, cols):
         rgb = np.zeros((cols, rows, 3), dtype=np.uint8)
@@ -161,3 +108,35 @@ class MapGenerator:
                 rgb[tile.c, tile.r, :] = color
         mini_map = pg.surfarray.make_surface(rgb)
         return mini_map
+
+    @staticmethod
+    def generate_from_txt(game, sprites_group):
+        file_path = os.path.join(FOLDER_RESOURCES, 'map_1.txt')
+        data = []
+        with open(file_path, 'rt') as f:
+            for line in f:
+                data.append(line)
+        rows = len(data)
+        cols = len(data[0])
+        number_map = np.zeros((rows, cols), dtype=np.uint8)
+
+        for row, tiles in enumerate(data):
+            for col, el in enumerate(tiles):
+                number_map[row, col] = int(el)
+
+        tile_dict = MapGenerator.generate_tiles(game, sprites_group, number_map)
+        return tile_dict
+
+        #         # generate a tile:
+        #         tile_dict[str(row) + '.' + str(col)] = Tile(game, row, col, tile_type)
+        #
+        # MapInfo = namedtuple('MapInfo',
+        #                      ['tile_dict', 'width_in_tile_numbers', 'height_in_tile_numbers',
+        #                      'height_in_pix', 'width_in_pix'])
+        #
+        # map_info = MapInfo(tile_dict=tile_dict,
+        #                    width_in_tile_numbers=width_in_tiles_numbers,
+        #                    height_in_tile_numbers=height_in_tiles_numbers,
+        #                    height_in_pix=height_in_pix,
+        #                    width_in_pix=width_in_pix)
+        # return map_info

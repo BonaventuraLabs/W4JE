@@ -1,5 +1,5 @@
 import pygame as pg
-
+from src.player.player import Player
 
 class EventManager:
     def __init__(self, game):
@@ -14,13 +14,10 @@ class EventManager:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.game.quit()
-                # Unit movement
-                elif event.key in [pg.K_KP1, pg.K_KP3, pg.K_KP4, pg.K_KP6, pg.K_KP7, pg.K_KP9]:
-                    self.game.current_player.ship.move(event.key)
-                # center camera on player
-                elif event.key == pg.K_KP5:
-                    self.game.camera.update(self.game.current_player.ship.rect.x,
-                                            self.game.current_player.ship.rect.y)
+
+                # Player movements?
+                elif event.key in Player.keys_all:
+                    self.game.player_turn_manager.current_player.handle_keys(event)
 
                 # Camera:
                 elif event.key == pg.K_LEFT:
@@ -40,21 +37,30 @@ class EventManager:
             elif event.type == pg.MOUSEBUTTONUP and event.button == 3:
                 self.game.mouse_drag = False
 
+            # left click
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
-                click_screen_xy = pg.mouse.get_pos()
+                click_xy_in_screen = pg.mouse.get_pos()
                 # to convert screen coordinates to map coordinates, we need to apply camera shift.
                 # shift the screen click coordinates by the Camera offset:
                 shift_xy = self.game.camera.rect.topleft
-                click_map_xy = [cl-sh for cl, sh in zip(click_screen_xy, shift_xy)]
+                click_xy_in_map = [cl-sh for cl, sh in zip(click_xy_in_screen, shift_xy)]
 
-                # test HUD? test by SCREEN COORDINATES
-                clicked_item = self.game.hud.get_clicked(click_screen_xy)
+                test_clicked_item = None
+
+                # Test HUD. Test by SCREEN COORDINATES
+                if test_clicked_item is None:
+                    test_clicked_item = self.game.hud.get_clicked(click_xy_in_screen)
+
+                # Test Unit Sprites (ship, castle, enemies?). Test by SCREEN COORDINATES
+                # for now only players are checked.
+                if test_clicked_item is None:
+                    test_clicked_item = self.game.player_turn_manager.get_clicked(click_xy_in_map)
 
                 # test map?  test by MAP COORDINATES
-                if clicked_item is None:
-                    clicked_item = self.game.map.get_clicked(click_map_xy)
+                if test_clicked_item is None:
+                    test_clicked_item = self.game.map.get_clicked(click_xy_in_map)
 
-                # print(clicked_item)
+                #print(test_clicked_item)
 
 
 

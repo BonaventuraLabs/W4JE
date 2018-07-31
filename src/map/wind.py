@@ -12,11 +12,9 @@ class Wind:
         # 0 - shtil, 4 - storm.
 
     def update(self, *args):
-        pass
-    #TODO: put getnew directino here???
+        self.get_random_direction()
 
-    def get_new_direction(self):
-
+    def get_random_direction(self):
         self.current_direction = np.random.choice(list(self.directions.keys()))
         self.current_angle = self.directions[self.current_direction]
         self.current_strength = np.random.choice(self.strengths)

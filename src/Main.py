@@ -9,7 +9,7 @@ from src.map.map import Map
 from src.map.atmosphere import Atmosphere
 from src.eventmanager.event_manager import EventManager
 from src.player.player import Player
-from src.player.turn_manager import TurnManager
+from src.player.player_turn_manager import PlayerTurnManager
 
 # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # from .context import sample
@@ -29,11 +29,8 @@ class Game:
         self.clock = pg.time.Clock()
         self.image_manager = ImageManager(self)
 
-        self.sprites_all = pg.sprite.Group()
         self.sprites_anim = pg.sprite.Group()
         self.sprites_unit = pg.sprite.Group()
-        self.sprites_map = pg.sprite.Group()
-        # self.sprites_hud = pg.sprite.Group()
         self.sprites_menu = pg.sprite.Group()
 
         self.event_manager = EventManager(self)
@@ -42,18 +39,10 @@ class Game:
         self.atmosphere = Atmosphere(self)
         self.camera = Camera(self.map.width, self.map.height)
 
-        # self.turn_manager = TurnManager(self)
-
-        self.player_deque = deque([Player(self, 'Dimas', YELLOW),
-                                  Player(self, 'Alex', RED),
-                                  Player(self, 'Danila', GREEN)])
-
-        self.current_player = self.player_deque[0]
-        self.current_player.set_current()
-        self.turn_finished = False
+        self.player_turn_manager = PlayerTurnManager(self)
 
         self.mouse_drag = False
-        self.mouse_drag_xy = self.current_player.ship.xy
+        self.mouse_drag_xy = self.player_turn_manager.current_player.ship.xy
         self.playing = True
 
     def run(self):
@@ -64,25 +53,22 @@ class Game:
             # dispatch events.
             self.event_manager.check_events()
 
-            # update some events; for instance, camera shift, or menu.
-            # self.update_some_events()
-
             # if finished, update state.
-            if self.current_player.is_done:
-                # self.current_player.update()
-                self.update_state_on_turn()
-                # go to next player
-                self.player_deque.rotate(1)
-                self.current_player = self.player_deque[0]
-                self.current_player.set_current()
+            self.player_turn_manager.check_state()
 
             # Do animations always
             self.update_animation()
             self.draw()
 
     def update_animation(self):
-        self.sprites_anim.update()
+        self.map.animate()
+        self.atmosphere.animate()
+        for sprite in self.sprites_anim:
+            sprite.update()
+        # self.current_player.ship.aura.update()
+        # self.turn_manager.update?
 
+        #TODO: make a dragger class
         if self.mouse_drag:
             xy = pg.mouse.get_pos()
             # print('-------')
@@ -108,9 +94,6 @@ class Game:
         self.hud.draw()
         pg.display.flip()
 
-    def update_state_on_turn(self):
-        self.atmosphere.wind.get_new_direction()
-
     def show_start_screen(self):
         pass
 
@@ -127,7 +110,6 @@ g = Game()
 
 while True:
     g.run()
-    #g.show_go_screen()
 
 g.quit()
 

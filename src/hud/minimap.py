@@ -1,6 +1,7 @@
 from src.map.map_generator import MapGenerator
 import pygame as pg
 
+
 class Minimap(pg.sprite.Sprite):
     def __init__(self, game, hud):
         self.id = 'minimap'
@@ -10,8 +11,8 @@ class Minimap(pg.sprite.Sprite):
 
         # get map image
         image = MapGenerator.generate_minimap(self.game.map.tiles_dict,
-                                              self.game.map.tileheight,
-                                              self.game.map.tilewidth)
+                                              self.game.map.height_in_tiles,
+                                              self.game.map.width_in_tiles)
 
         # rescale size:
         target_width = 120
@@ -28,4 +29,4 @@ class Minimap(pg.sprite.Sprite):
         pass
 
     def on_click(self):
-        print('minimap clicked')
+        print('Click : Minimap' )

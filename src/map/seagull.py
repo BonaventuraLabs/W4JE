@@ -3,10 +3,10 @@ import pygame as pg
 
 
 class Seagull(pg.sprite.Sprite):
-    def __init__(self, game):
-        self.groups = game.sprites_anim
+    def __init__(self, atmosphere):
+        self.game = atmosphere.game
+        self.groups = atmosphere.sprites_atmosphere #, self.game.sprites_anim
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
         self.image = self.game.image_manager.seagull
         self.rect = self.image.get_rect()
 
@@ -21,7 +21,10 @@ class Seagull(pg.sprite.Sprite):
         # azimuthal position of seagull on its orbit
         self.orbit_angle = np.random.randint(0, 360)
 
-        self.rotation_direction = 1 #np.random.choice([-1, 1])
+        self.rotation_direction = 1  #np.random.choice([-1, 1])
+        # if self.rotation_direction == -1:
+        #     # seagull is looking in the opposite direction, turn over its image:
+        #     self.image = pg.transform.rotate(self.game.image_manager.seagull, 180)
 
         # its orientation
         self.orientation_angle = - self.orbit_angle  # 0 = seagull looks upwards: --^--

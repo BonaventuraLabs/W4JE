@@ -7,7 +7,7 @@ class Castle(pg.sprite.Sprite):
     def __init__(self, game, player, row, col):
         self.game = game
         self.player = player
-        self.groups = self.game.sprites_unit, self.game.sprites_anim
+        self.groups = self.game.sprites_unit #, self.game.sprites_anim
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = self.game.image_manager.castle
 
@@ -27,3 +27,6 @@ class Castle(pg.sprite.Sprite):
         label.get_rect().center = self.rect.center
         label.get_rect().bottom = self.rect.bottom
         return label
+
+    def on_click(self):
+        print('Click : ' + self.player.name + ' castle')

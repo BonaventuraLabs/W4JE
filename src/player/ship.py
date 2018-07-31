@@ -22,6 +22,8 @@ class Ship(pg.sprite.Sprite):
         self.xy_prev = self.xy[:]
         self.rect.center = self.xy
         self.moving_anim_on = False
+        self.moves_per_turn = 2  # equivalent of speed
+        self.moves_left = self.moves_per_turn
 
     def recalc_center(self):
         self.r_prev = self.r
@@ -31,8 +33,14 @@ class Ship(pg.sprite.Sprite):
         self.rect.center = self.xy
         self.aura.set_center(self.xy)
 
+
+    def on_click(self):
+        print('Click : ' + self.player.name + ' ship')
+
+
     # TODO: wind effect.
     def on_moved(self):
+        self.moves_left -= 1
         self.recalc_center()
         self.moving_anim_on = True
         # set back for animation
@@ -84,7 +92,7 @@ class Ship(pg.sprite.Sprite):
                 self.moving_anim_on = False
                 self.rect.center = self.xy
                 self.aura.set_center(self.xy)
-                self.player.unset_current()
+                # self.player.unset_current()
 
         # shuffle aura
         if self.player.is_current:
@@ -94,6 +102,10 @@ class Ship(pg.sprite.Sprite):
         print('Check what in target tile')
 
     def move(self, event_key):
+        if self.moves_left <= 0:
+            print(self.player.name + ': ship is out of moves.')
+            return
+
         if event_key == pg.K_KP1:
             self.move_ld()
         elif event_key == pg.K_KP3:

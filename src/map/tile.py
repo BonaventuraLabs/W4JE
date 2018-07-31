@@ -2,9 +2,9 @@ import pygame as pg
 
 
 class Tile(pg.sprite.Sprite):
-    def __init__(self, game, row, col, tile_type):
+    def __init__(self, game, sprites_group, row, col, tile_type):
         self.game = game
-        self.groups = self.game.sprites_map, self.game.sprites_anim
+        self.groups = sprites_group # self.game.sprites_map, #self.game.sprites_anim
         pg.sprite.Sprite.__init__(self, self.groups)
 
         self.c = col
@@ -31,5 +31,5 @@ class Tile(pg.sprite.Sprite):
         return 'Tile: ' + self.type + '; r.c = ' + self.rc_str
 
     def on_click(self):
-        print(self)
+        print('Click : ' + self.__str__())
 

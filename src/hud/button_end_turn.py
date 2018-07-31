@@ -24,5 +24,5 @@ class ButtonEndTurn(pg.sprite.Sprite):
         self.game.screen.blit(label, label_rect)
 
     def on_click(self):
-        print('end turn!')
+        self.game.player_turn_manager.end_turn()
 
