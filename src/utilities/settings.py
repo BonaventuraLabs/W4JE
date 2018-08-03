@@ -45,6 +45,7 @@ SHIP = 'ship_1.png'
 SEAGULL = 'image_seagull_1.png'
 CASTLE = 'image_castle_1.png'
 CLOUDS_1_6 = ['image_cloud_', '.png']
+FISH_1_2 = ['image_fish_', '.png']
 
 TILE_TYPE_DICT = {0: 'sea', 'sea': 0,
                   1: 'land', 'land': 1,

@@ -40,6 +40,7 @@ class ImageManager:
         self.castle = pg.transform.scale(castle, (3*TILEWIDTH, 3*TILEHEIGHT))
 
         self.cloud_list = ImageManager.load_cloud_list()
+        self.fish_list = ImageManager.load_fish_list()
 
     @staticmethod
     def load(name):
@@ -48,12 +49,23 @@ class ImageManager:
 
     @staticmethod
     def load_cloud_list():
-        cloud_list = []
+        img_list = []
         for i in range(1, 7):
             img_name = CLOUDS_1_6[0] + str(i) + CLOUDS_1_6[1]
             img = ImageManager.load(img_name)
             # img.set_alpha(10)  # does not work if an image ha its own per-poxel transparency
             # resize?
             img = pg.transform.scale(img, (300, 100))
-            cloud_list.append(img)
-        return cloud_list
+            img_list.append(img)
+        return img_list
+
+    @staticmethod
+    def load_fish_list():
+        img_list = []
+        for i in range(1, 3):
+            img_name = FISH_1_2[0] + str(i) + FISH_1_2[1]
+            img = ImageManager.load(img_name)
+            # resize?
+            img = pg.transform.scale(img, (TILEWIDTH, TILEWIDTH))
+            img_list.append(img)
+        return img_list

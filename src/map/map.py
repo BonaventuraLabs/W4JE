@@ -30,7 +30,7 @@ class Map:
 
     def draw(self):
         for k, tile in self.tiles_dict.items():
-            self.game.screen.blit(tile.image, self.game.camera.apply(tile))
+            tile.draw()
 
     def get_tile_by_rc(self, r, c):
         target_tile = None
