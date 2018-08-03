@@ -15,8 +15,8 @@ class Seagull(pg.sprite.Sprite):
 
         # orbit radius and center
         self.orbit_r = np.random.randint(50, 200)
-        self.orbit_c = (np.random.randint(0, self.game.map.width),
-                        np.random.randint(0, self.game.map.height))
+        self.orbit_c = (np.random.randint(0, self.game.map.width_in_pix),
+                        np.random.randint(0, self.game.map.height_in_pix))
 
         # azimuthal position of seagull on its orbit
         self.orbit_angle = np.random.randint(0, 360)

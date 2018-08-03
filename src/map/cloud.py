@@ -9,8 +9,8 @@ class Cloud(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = np.random.choice(self.game.image_manager.cloud_list)
         self.rect = self.image.get_rect()
-        self.rect.center = (np.random.randint(0, self.game.map.width),
-                            np.random.randint(0, self.game.map.height))
+        self.rect.center = (np.random.randint(0, self.game.map.width_in_pix),
+                            np.random.randint(0, self.game.map.height_in_pix))
         self.frame_skipper = 0
         self.frame_skipper_max = 10
 
@@ -28,13 +28,13 @@ class Cloud(pg.sprite.Sprite):
         self.rect.y -= strength * np.sin(np.deg2rad(90 + angle))
 
         # TODO: make slow dissolving? Opacity as a function of distance to edge, then translate as below:
-        if self.rect.left > self.game.map.width:
+        if self.rect.left > self.game.map.width_in_pix:
             self.rect.right = 0
         if self.rect.right < 0:
-            self.rect.left = self.game.map.width
+            self.rect.left = self.game.map.width_in_pix
         if self.rect.bottom < 0:
-            self.rect.top = self.game.map.height
-        if self.rect.top > self.game.map.height:
+            self.rect.top = self.game.map.height_in_pix
+        if self.rect.top > self.game.map.height_in_pix:
             self.rect.bottom = 0
 
     def draw(self):

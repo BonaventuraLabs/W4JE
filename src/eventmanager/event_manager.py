@@ -1,5 +1,7 @@
 import pygame as pg
 from src.player.player import Player
+from src.hud.camera import Camera
+
 
 class EventManager:
     def __init__(self, game):
@@ -20,14 +22,8 @@ class EventManager:
                     self.game.player_turn_manager.current_player.handle_keys(event)
 
                 # Camera:
-                elif event.key == pg.K_LEFT:
-                    self.game.camera.move_left()
-                elif event.key == pg.K_RIGHT:
-                    self.game.camera.move_right()
-                elif event.key == pg.K_UP:
-                    self.game.camera.move_up()
-                elif event.key == pg.K_DOWN:
-                    self.game.camera.move_down()
+                elif event.key in Camera.keys_all:
+                    self.game.camera.handle_keys(event)
 
             # switch dragging on-off
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:

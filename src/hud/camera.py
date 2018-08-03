@@ -3,10 +3,14 @@ import pygame as pg
 
 
 class Camera:
-    def __init__(self, width, height):
-        self.rect = pg.Rect(0, 0, width, height)
-        self.width = width
-        self.height = height
+
+    keys_all = [pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN, pg.K_KP5, pg.K_KP0]
+
+    def __init__(self, game):
+        self.game = game
+        self.rect = pg.Rect(0, 0, self.game.map.width_in_pix, self.game.map.height_in_pix)
+        self.width = self.rect.w #.rectwidth
+        self.height = self.rect.h #height
         self.speed = CAMERA_SPEED
 
     # def apply(self, target):
@@ -31,6 +35,26 @@ class Camera:
         x_shifted = - x + int(WIDTH / 2)
         y_shifted = - y + int(HEIGHT / 2)
         self.rect = pg.Rect(x_shifted, y_shifted, self.width, self.height)
+
+    def handle_keys(self, event):
+        # move camera
+        if event.key == pg.K_LEFT:
+            self.move_left()
+        elif event.key == pg.K_RIGHT:
+            self.move_right()
+        elif event.key == pg.K_UP:
+            self.move_up()
+        elif event.key == pg.K_DOWN:
+            self.move_down()
+
+        # center camera on current  player ship/castle
+        elif event.key == pg.K_KP5:
+            self.update(self.game.player_turn_manager.current_player.ship.rect.center[0],
+                        self.game.player_turn_manager.current_player.ship.rect.center[1])
+        elif event.key == pg.K_KP0:
+            self.update(self.game.player_turn_manager.current_player.castle.rect.center[0],
+                        self.game.player_turn_manager.current_player.castle.rect.center[1])
+
 
     def move_left(self):
         self.rect.x += self.speed

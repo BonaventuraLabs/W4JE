@@ -27,6 +27,9 @@ class Tile(pg.sprite.Sprite):
         # I had to do it thre, because I cannot import Map to use its method rc_to_xy.
         # Import is forbidden, because it loops the imports: Map -> Generator -> Tile -> Map.
 
+        # TODO: fog of war.
+        self.discovered_by = []
+
     def __str__(self):
         return 'Tile: ' + self.type + '; r.c = ' + self.rc_str
 

@@ -37,7 +37,7 @@ class Game:
         self.map = Map(self)
         self.hud = Hud(self)
         self.atmosphere = Atmosphere(self)
-        self.camera = Camera(self.map.width, self.map.height)
+        self.camera = Camera(self)
 
         self.player_turn_manager = PlayerTurnManager(self)
 

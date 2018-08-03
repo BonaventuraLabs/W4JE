@@ -5,6 +5,7 @@ import pygame as pg
 
 
 class Map:
+
     def __init__(self, game):
         self.game = game
         self.sprites_map = pg.sprite.Group()
@@ -12,14 +13,17 @@ class Map:
         # TODO: wrong. height in pix is not N*y, because the tiles are shifted. Works so far.
         self.width_in_tiles = MAP_TILE_W
         self.height_in_tiles = MAP_TILE_H
-        self.height = TILEHEIGHT * MAP_TILE_H
-        self.width = TILEWIDTH * MAP_TILE_W
+        self.height_in_pix = TILEHEIGHT * MAP_TILE_H
+        self.width_in_pix = TILEWIDTH * MAP_TILE_W
         self.tiles_dict = MapGenerator.generate_from_numpy(game, self.sprites_map, MAP_TILE_H, MAP_TILE_W)
 
         # calculate xy of tiles
         for k, tile in self.tiles_dict.items():
             tile.center = Map.rc_to_xy(tile.r, tile.c)
             tile.rect.center = tile.center
+
+        # make list of spawn points (player may appear only on Coast tile.
+        self.get_spawn_tiles()
 
     def animate(self):
         pass
@@ -28,16 +32,32 @@ class Map:
         for k, tile in self.tiles_dict.items():
             self.game.screen.blit(tile.image, self.game.camera.apply(tile))
 
+    def get_tile_by_rc(self, r, c):
+        target_tile = None
+        for k, tile in self.tiles_dict.items():
+            if (r, c) == (tile.r, tile.c):
+                target_tile = tile
+                break
+        if target_tile is None:
+            print('could not find tile with rc: %s, %s'%(r, c))
+        return target_tile
+
+
     def get_clicked(self, map_xy):
-        clicked_item = None
+        target_tile = None
         for k, tile in self.tiles_dict.items():
             if tile.rect.collidepoint(map_xy):
-                clicked_item = tile
-                clicked_item.on_click()
+                target_tile = tile
+                target_tile.on_click()
                 break
-        return clicked_item
+        return target_tile
 
-
+    def get_spawn_tiles(self):
+        coast_tiles = []
+        for k, tile in self.tiles_dict.items():
+            if tile.type == 'sand':
+                coast_tiles.append((tile.r, tile.c))
+        self.spawn_tiles_list = coast_tiles
 
     @staticmethod
     def rc_to_xy(r, c):
