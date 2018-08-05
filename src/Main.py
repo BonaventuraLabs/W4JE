@@ -67,10 +67,8 @@ class Game:
         self.atmosphere.animate()
         for sprite in self.sprites_anim:
             sprite.update()
-        # self.current_player.ship.aura.update()
-        # self.turn_manager.update?
 
-        #TODO: make a dragger class
+        #TODO: make a dragger class?
         if self.mouse_drag:
             xy = pg.mouse.get_pos()
             # print('-------')

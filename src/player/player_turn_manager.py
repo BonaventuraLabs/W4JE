@@ -1,4 +1,5 @@
 from src.player.player import Player
+from src.player.pirate import Pirate
 from collections import deque
 from src.utilities.settings import *
 import pygame as pg
@@ -13,7 +14,8 @@ class PlayerTurnManager:
         self.game = game
         self.player_deque = deque([Player(self.game, 'Dimas', YELLOW),
                                    Player(self.game, 'Alex', RED),
-                                   Player(self.game, 'Danila', GREEN)])
+                                   Player(self.game, 'Danila', GREEN),
+                                   Pirate(self.game, 'Long John', BLACK)])
         self.current_player = None
         self.start_turn(self.player_deque[0])
 
@@ -27,19 +29,29 @@ class PlayerTurnManager:
         self.current_player.ship.recalc_center()
         self.game.camera.update(self.current_player.ship.rect.x, self.current_player.ship.rect.y)
 
-    def end_turn(self):
-        self.current_player.is_done = True
+    def on_end_turn(self):
         self.current_player.is_current = False
-        #self.current_player = None
 
     def check_state(self):
+        # if the current player is a pirate:
+        if isinstance(self.current_player, Pirate):
+            pg.time.wait(1000)
+            while self.current_player.ship.moves_left > 0:
+                # TODO: pirate can move more than normal player, since moves_left is allowed to be negative.
+                self.current_player.handle_move()
+            else:
+                self.current_player.is_done = True
+
         if not self.current_player.is_done:
             return
 
+        # if player is done: end turn
+        self.on_end_turn()
+
+        # Generate next turn:
         PlayerTurnManager.global_turn_count += 1
 
-        # if player is done:
-        self.end_turn()
+
 
         # go to next player; rotate player deck once
         self.player_deque.rotate(1)

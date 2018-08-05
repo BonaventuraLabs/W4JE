@@ -1,19 +1,44 @@
-import numpy as np
-from src.utilities.settings import *
-from src.player.aura import Aura
-from src.player.battle import Battle
 import pygame as pg
+from src.player.ship import Ship
+from src.utilities.settings import *
+import numpy as np
+from src.player.battle import Battle
 
 
-class Ship(pg.sprite.Sprite):
+class Pirate:
 
+    def __init__(self, game, name, color):
+        self.game = game
+        self.color = color
+        self.name = name
+
+        # position at generation:
+        # shuffle available tiles:
+        np.random.shuffle(self.game.map.spawn_tiles_list)
+        row, col = self.game.map.spawn_tiles_list.pop()
+
+        self.ship = PirateShip(game, self, row, col)
+
+        # turn parameters
+        # self.turn_finished = False
+        # not his turn at creation:
+        self.is_current = False
+        self.is_done = True
+
+    def handle_move(self):
+        self.ship.handle_move()
+
+
+class PirateShip(pg.sprite.Sprite):
     def __init__(self, game, player, row, col):
         self.game = game
         self.player = player
         self.groups = self.game.sprites_unit, self.game.sprites_anim
+
+        # super(PirateShip, self, self.groups)
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.image = self.game.image_manager.ship
-        self.aura = Aura(self)
+
+        self.image = self.game.image_manager.pirate_ship
         self.rect = self.image.get_rect()
 
         # tile coordinates:
@@ -35,57 +60,17 @@ class Ship(pg.sprite.Sprite):
 
         self.moving_anim_on = False
 
-        self.hp = 100
+        self.hp = 50
         self.attack = 10
         self.defense = 10
         self.destroyed = False
 
-        self.items = []
+        self.chance_to_change_dir = 10  # percents,
+        self.chosen_direction = np.random.choice(['l', 'lu', 'ru', 'r', 'rd', 'ld'])
 
-    def draw(self):
-        if self.player.is_current:
-            self.game.screen.blit(self.aura.image, self.game.camera.apply(self.aura))
-        self.game.screen.blit(self.image, self.game.camera.apply(self))
-        label, label_rect = self.get_name_label()
-        self.game.screen.blit(label, self.game.camera.apply(label_rect))
-
-    def get_name_label(self):
-        text = self.player.name
-        label = self.game.font.render(text, True, WHITE)
-        label_rect = label.get_rect()
-        label_rect.center = self.rect.center
-        label_rect.bottom = self.rect.bottom
-        return label, label_rect
-
-    def update(self, *args):
-
-        if self.moving_anim_on:
-
-            # check in which direction should move:
-            dx = self.xy[0] - self.rect.center[0]
-            dy = self.xy[1] - self.rect.center[1]
-
-            if dx > 0:
-                self.rect.center = (self.rect.center[0]+1, self.rect.center[1])  # stupid, because tuple cannot be += 1
-            if dx < 0:
-                self.rect.center = (self.rect.center[0] - 1, self.rect.center[1])
-            if dy > 0:
-                self.rect.center = (self.rect.center[0], self.rect.center[1] + 1)
-            if dy < 0:
-                self.rect.center = (self.rect.center[0], self.rect.center[1] - 1)
-
-            self.aura.set_center(self.rect.center)
-
-            # check if done
-            if abs(dx) < 1 and abs(dy) < 1:
-                self.moving_anim_on = False
-                self.rect.center = self.xy
-                self.aura.set_center(self.xy)
-                # self.player.unset_current()
-
-        # shuffle aura
-        if self.player.is_current:
-            self.aura.update()
+    def get_another_direction(self):
+        if np.random.randint(0, 100) < self.chance_to_change_dir:
+            self.chosen_direction = np.random.choice(['l', 'lu', 'ru', 'r', 'rd', 'ld'])
 
     def recalc_center(self):
         # save the old values:
@@ -96,44 +81,40 @@ class Ship(pg.sprite.Sprite):
         # recalculate
         self.xy = self.game.map.rc_to_xy(self.r, self.c)
         self.rect.center = self.xy
-        self.aura.set_center(self.xy)
 
-    # -------------------------- Movement Functions --------------------------------
-    def analyze_move(self, event):
+    def draw(self):
+        self.game.screen.blit(self.image, self.game.camera.apply(self))
+        label, label_rect = self.get_name_label()
+        self.game.screen.blit(label, self.game.camera.apply(label_rect))
+
+    def get_name_label(self):
+        text = self.player.name + '. Moves: ' + self.chosen_direction
+        label = self.game.font.render(text, True, WHITE)
+        label_rect = label.get_rect()
+        label_rect.center = self.rect.center
+        label_rect.bottom = self.rect.bottom
+        return label, label_rect
+
+    def handle_move(self):
         if self.destroyed:
-            print('\n' + self.player.name + ': Ship is destroyed.')
             return
+        # print('Pirate move')
+        self.get_another_direction()
+        self.analyze_move(self.chosen_direction)
 
-        # check if there are moves left:
-        if self.moves_left <= 0:
-            print('\n' + self.player.name + ': ship is out of moves.')
-            return
-
-        # movement direction:
-        move_dir_dict = {pg.K_KP1: 'ld', pg.K_KP3: 'rd', pg.K_KP4: 'l',
-                         pg.K_KP6: 'r', pg.K_KP7: 'lu', pg.K_KP9: 'ru'}
-        cur_move = move_dir_dict[event.key]
-
+    def analyze_move(self, cur_move):
         # get wind penalty:
         self.move_penalty = self.game.atmosphere.wind.ship_movement_penalty_dict[cur_move]
-        # print(self.move_penalty)
 
-        # check if the movement is forced:
-        mov_forced = False
-        if pg.key.get_mods() & pg.KMOD_SHIFT:
-            pass
-            # mov_forced = True
-        if pg.key.get_mods() & pg.KMOD_CTRL:
-            mov_forced = True
+        # movement is forced:
+        mov_forced = True
 
         # No wind: I maximize the move penalty as to have only 1 movement per turn.
         if self.game.atmosphere.wind.current_strength == 0:
             if mov_forced:
                 self.move_penalty = -self.moves_per_turn
             else:
-                print('\nNo wind...')
-                print('You can spend your actions on something else, or move for 1 tile only (Ctrl+KeyPad).')
-                return
+                pass
 
         # get the desired r, c
         target_r, target_c = self.calculate_target_rc(cur_move)
@@ -166,21 +147,40 @@ class Ship(pg.sprite.Sprite):
         # print('targeted tile: ' + target_tile.__str__())
 
         if target_tile is None:
-            print('Tile does not exist.')
             return
         elif target_tile.type != 'sea':
-            print('Tile is not sea!')
             return
         elif target_tile.type == 'sea':
-            # movement allowed
             pass
 
         # estimate if move is possible:
         if (self.moves_left + self.move_penalty) < 0:
-            print('Move is too demanding. You can spend your moves on something else.')
-            return
+            pass
 
         self.make_move(target_r, target_c)
+
+    def make_move(self, target_r, target_c):
+        # apply penalty
+        self.moves_left += self.move_penalty
+
+        self.r = target_r
+        self.c = target_c
+        self.recalc_center()
+
+        # this part is for animation.
+        # set animation ON
+        self.moving_anim_on = True
+        # we have to start from OLD r,c:
+        self.rect.center = self.xy_prev  # self.xy
+
+    def make_destroyed(self):
+        self.destroyed = True
+        self.moves_left = 0
+        self.moves_per_turn = 0
+        self.image = self.game.image_manager.ship_wreck
+
+    def on_click(self):
+        print('Click : ' + self.player.name + ' ship')
 
     def calculate_target_rc(self, cur_move):
         """
@@ -231,53 +231,23 @@ class Ship(pg.sprite.Sprite):
                 c = self.c + 1
         return r, c
 
-    def make_move(self, target_r, target_c):
-        # apply penalty
-        self.moves_left += self.move_penalty
+    def update(self, *args):
+        if self.moving_anim_on:
+            # check in which direction should move:
+            dx = self.xy[0] - self.rect.center[0]
+            dy = self.xy[1] - self.rect.center[1]
 
-        self.r = target_r
-        self.c = target_c
-        self.recalc_center()
+            if dx > 0:
+                self.rect.center = (
+                self.rect.center[0] + 1, self.rect.center[1])  # stupid, because tuple cannot be += 1
+            if dx < 0:
+                self.rect.center = (self.rect.center[0] - 1, self.rect.center[1])
+            if dy > 0:
+                self.rect.center = (self.rect.center[0], self.rect.center[1] + 1)
+            if dy < 0:
+                self.rect.center = (self.rect.center[0], self.rect.center[1] - 1)
 
-        # this part is for animation.
-        # set animation ON
-        self.moving_anim_on = True
-        # we have to start from OLD r,c:
-        self.rect.center = self.xy_prev  # self.xy
-        self.aura.set_center(self.rect.center)
-
-    def handle_collect(self, event):
-        # check if enough moves are left:
-        if self.moves_left <= 0:
-            print('\n' + self.player.name + ': ship is out of moves.')
-            return
-        else:
-            cur_tile = self.game.map.tiles_dict['%s.%s' % (self.r, self.c)]
-            cur_tile.inspect_tile()
-            self.moves_left -= 1
-
-            # collect item
-            item = cur_tile.remove_one_item()
-            if item:
-                self.items.append(item)
-
-    def on_click(self):
-        print('Click : ' + self.player.name + ' ship')
-
-    def make_destroyed(self):
-        self.destroyed = True
-        self.moves_left = 0
-        self.moves_per_turn = 0
-        self.image = self.game.image_manager.ship_wreck
-
-    def print_full_info(self):
-        print('---=== SHIP ===---')
-        print('Health: ' + str(self.hp))
-        print('Defense: ' + str(self.defense))
-        print('Attack: ' + str(self.attack))
-        print('Items:')
-        if len(self.items) > 0:
-            for item in self.items:
-                print('  ' + item.name)
-        else:
-            print('None')
+            # check if done
+            if abs(dx) < 1 and abs(dy) < 1:
+                self.moving_anim_on = False
+                self.rect.center = self.xy

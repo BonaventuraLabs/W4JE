@@ -43,9 +43,11 @@ WIND_ARROW = 'wind_arrow_2.png'
 HUD_SCROLL = 'hud_scroll_2.png'
 HUD_COMPASS = 'hud_compass_3.png'
 SHIP = 'ship_1.png'
+PIRATE = 'image_pirate_1.png'
 SHIP_WRECK = 'image_ship_wreck_1.png'
 SEAGULL = 'image_seagull_1.png'
 CASTLE = 'image_castle_1.png'
+
 CLOUDS_1_6 = ['image_cloud_', '.png']
 FISH_1_2 = ['image_fish_', '.png']
 ANIMALS_1_3 = ['image_animal_', '.png']

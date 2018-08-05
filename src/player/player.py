@@ -39,7 +39,7 @@ class Player:
 
     def handle_keys(self, event):
         if event.key in Player.keys_ship_move:
-            self.ship.handle_move(event)
+            self.ship.analyze_move(event)
 
         if event.key in Player.keys_ship_collect:
             self.ship.handle_collect(event)
@@ -50,5 +50,6 @@ class Player:
             self.castle.print_full_info()
 
         if event.key == pg.K_KP_ENTER:
-            self.game.player_turn_manager.end_turn()
+            self.is_done = True
+            #self.game.player_turn_manager.end_turn()
 
