@@ -11,7 +11,10 @@ class Ship(pg.sprite.Sprite):
         self.game = game
         self.player = player
         self.groups = self.game.sprites_unit, self.game.sprites_anim
-        pg.sprite.Sprite.__init__(self, self.groups)
+
+        #pg.sprite.Sprite.__init__(self, self.groups)
+        super().__init__(self.groups)
+
         self.image = self.game.image_manager.ship
         self.aura = Aura(self)
         self.rect = self.image.get_rect()

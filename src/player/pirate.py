@@ -35,8 +35,8 @@ class PirateShip(pg.sprite.Sprite):
         self.player = player
         self.groups = self.game.sprites_unit, self.game.sprites_anim
 
-        # super(PirateShip, self, self.groups)
-        pg.sprite.Sprite.__init__(self, self.groups)
+        super().__init__(self.groups)
+        #pg.sprite.Sprite.__init__(self, self.groups)
 
         self.image = self.game.image_manager.pirate_ship
         self.rect = self.image.get_rect()
