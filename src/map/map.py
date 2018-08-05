@@ -10,12 +10,16 @@ class Map:
         self.game = game
         self.sprites_map = pg.sprite.Group()
 
-        # TODO: wrong. height in pix is not N*y, because the tiles are shifted. Works so far.
         self.width_in_tiles = MAP_TILE_W
         self.height_in_tiles = MAP_TILE_H
-        self.height_in_pix = TILEHEIGHT * MAP_TILE_H
+        # height in pix is not N*tile_h, because the tiles are shifted. This is a good proxy:
+        self.height_in_pix = (TILEHEIGHT / 2 * 3) * int(MAP_TILE_H/2)
         self.width_in_pix = TILEWIDTH * MAP_TILE_W
-        self.tiles_dict = MapGenerator.generate_from_numpy(game, self.sprites_map, MAP_TILE_H, MAP_TILE_W)
+
+        # simple map with circular sea in the middle:
+        self.tiles_dict = MapGenerator.generate_circle_map(game, self.sprites_map, MAP_TILE_H, MAP_TILE_W)
+        # randomly generated map:
+        # self.tiles_dict = MapGenerator.generate_from_numpy(game, self.sprites_map, MAP_TILE_H, MAP_TILE_W)
 
         # calculate xy of tiles
         for k, tile in self.tiles_dict.items():
@@ -39,7 +43,8 @@ class Map:
                 target_tile = tile
                 break
         if target_tile is None:
-            print('could not find tile with rc: %s, %s'%(r, c))
+            # print('could not find tile with rc: %s, %s'%(r, c))
+            pass
         return target_tile
 
 

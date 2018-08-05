@@ -39,8 +39,12 @@ class ImageManager:
         castle = ImageManager.load(CASTLE)
         self.castle = pg.transform.scale(castle, (3*TILEWIDTH, 3*TILEHEIGHT))
 
+        ship_wreck = ImageManager.load(SHIP_WRECK)
+        self.ship_wreck = pg.transform.scale(ship_wreck, (TILEWIDTH, TILEHEIGHT))
+
         self.cloud_list = ImageManager.load_cloud_list()
         self.fish_list = ImageManager.load_fish_list()
+        self.animals_list = ImageManager.load_animals_list()
 
     @staticmethod
     def load(name):
@@ -64,6 +68,17 @@ class ImageManager:
         img_list = []
         for i in range(1, 3):
             img_name = FISH_1_2[0] + str(i) + FISH_1_2[1]
+            img = ImageManager.load(img_name)
+            # resize?
+            img = pg.transform.scale(img, (TILEWIDTH, TILEWIDTH))
+            img_list.append(img)
+        return img_list
+
+    @staticmethod
+    def load_animals_list():
+        img_list = []
+        for i in range(1, 4):
+            img_name = ANIMALS_1_3[0] + str(i) + ANIMALS_1_3[1]
             img = ImageManager.load(img_name)
             # resize?
             img = pg.transform.scale(img, (TILEWIDTH, TILEWIDTH))

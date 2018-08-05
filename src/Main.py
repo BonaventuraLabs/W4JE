@@ -35,8 +35,8 @@ class Game:
 
         self.event_manager = EventManager(self)
         self.map = Map(self)
-        self.hud = Hud(self)
         self.atmosphere = Atmosphere(self)
+        self.hud = Hud(self)
         self.camera = Camera(self)
 
         self.player_turn_manager = PlayerTurnManager(self)
@@ -44,6 +44,8 @@ class Game:
         self.mouse_drag = False
         self.mouse_drag_xy = self.player_turn_manager.current_player.ship.xy
         self.playing = True
+
+        self.debug_mode = False
 
     def run(self):
         while self.playing:
@@ -88,8 +90,9 @@ class Game:
     def draw(self):
         self.screen.fill(BLACK)
         self.map.draw()
-        for sprite in self.sprites_unit:
-            sprite.draw()
+        if not self.debug_mode:
+            for sprite in self.sprites_unit:
+                sprite.draw()
         self.atmosphere.draw()
         self.hud.draw()
         pg.display.flip()

@@ -1,6 +1,6 @@
 import pygame as pg
 import numpy as np
-from src.map.tile_item import TileItem
+from src.map.tile_item import Fish, Animal
 
 
 class Tile(pg.sprite.Sprite):
@@ -33,29 +33,57 @@ class Tile(pg.sprite.Sprite):
         # I had to do it thre, because I cannot import Map to use its method rc_to_xy.
         # Import is forbidden, because it loops the imports: Map -> Generator -> Tile -> Map.
 
-        self.item = None
+        self.items = []
         self.add_item()
 
         # TODO: fog of war.
         self.discovered_by = []
 
     def add_item(self):
-        chances = (1, 200) # 1 out of N
+        chances = (1, 100)  # 1 out of N
         if np.random.randint(0, chances[1], 1) < chances[0]:
-            self.item = TileItem(self)
+            if self.type == 'sea':
+                self.items.append(Fish(self))
+            elif self.type in ['land', 'sand', 'mountain']:
+                self.items.append(Animal(self))
+
+            # blit image of the item onto the tile image:
             img = self.image_base.copy()
-            img.blit(self.item.image, (0, 0))
-            self.image = img#.blit(self.item.image, (0, 0))
+            img.blit(self.items[-1].image, (0, 0))  # -1: show only the last entry.
+            self.image = img
 
-    def remove_item(self):
-        self.item = None
-        self.image = self.image_base
+    def remove_one_item(self):
+        if len(self.items) == 0:
+            print('\nNothing to collect.')
+            return None
 
-    def on_click(self):
-        print('Click : ' + self.__str__())
+        item = self.items.pop()
 
-    def __str__(self):
-        return 'Tile: ' + self.type + '; r.c = ' + self.rc_str
+        # get another tile image:
+        if len(self.items) == 0:
+            self.image = self.image_base
+        else:
+            img = self.image_base.copy()
+            img.blit(self.item[-1].image, (0, 0))  # -1: show only the last entry.
+            self.image = img
+
+        return item
 
     def draw(self):
         self.game.screen.blit(self.image, self.game.camera.apply(self))
+
+    def inspect_tile(self):
+        print('\nInspecting the tile')
+        print(self)
+        if len(self.items) > 0:
+            print('This tile has items:')
+            for item in self.items:
+                print(item.name)
+        else:
+            print('No items.')
+
+    def on_click(self):
+        self.inspect_tile()
+
+    def __str__(self):
+        return 'Tile: ' + self.type + '; r.c = ' + self.rc_str

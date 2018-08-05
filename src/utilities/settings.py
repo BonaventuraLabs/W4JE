@@ -1,10 +1,11 @@
 import os
 
 
+SHEEP_SPEED = 10  # moves (1 tile) per turn
 TITLE = 'W4JE'
 
-WIDTH = 800
-HEIGHT = 600
+WIDTH = 1000
+HEIGHT = 800
 MAP_TILE_H = 50
 MAP_TILE_W = 100
 
@@ -40,12 +41,15 @@ TILE_SAND_IMAGE = 'tile_sand_1.png'
 
 WIND_ARROW = 'wind_arrow_2.png'
 HUD_SCROLL = 'hud_scroll_2.png'
-HUD_COMPASS = 'hud_compass_1.png'
+HUD_COMPASS = 'hud_compass_3.png'
 SHIP = 'ship_1.png'
+SHIP_WRECK = 'image_ship_wreck_1.png'
 SEAGULL = 'image_seagull_1.png'
 CASTLE = 'image_castle_1.png'
 CLOUDS_1_6 = ['image_cloud_', '.png']
 FISH_1_2 = ['image_fish_', '.png']
+ANIMALS_1_3 = ['image_animal_', '.png']
+
 
 TILE_TYPE_DICT = {0: 'sea', 'sea': 0,
                   1: 'land', 'land': 1,

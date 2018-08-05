@@ -17,12 +17,16 @@ class EventManager:
                 if event.key == pg.K_ESCAPE:
                     self.game.quit()
 
-                # Player movements?
+                elif event.key == pg.K_d:
+                    # debug mode
+                    self.game.debug_mode = not self.game.debug_mode
+
                 elif event.key in Player.keys_all:
+                    # Player keys
                     self.game.player_turn_manager.current_player.handle_keys(event)
 
-                # Camera:
                 elif event.key in Camera.keys_all:
+                    # Camera keys
                     self.game.camera.handle_keys(event)
 
             # switch dragging on-off

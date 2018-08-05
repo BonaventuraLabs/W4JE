@@ -31,4 +31,8 @@ class Castle(pg.sprite.Sprite):
         return label, label_rect
 
     def on_click(self):
-        print('Click : ' + self.player.name + ' castle')
+        print('\nClick : ' + self.player.name + ' castle')
+
+    def print_full_info(self):
+        print('---=== CASTLE ===---')
+        print('Empty.')

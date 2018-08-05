@@ -27,6 +27,7 @@ class WindArrow(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.fixed_position = (100, 200)
         self.rect.center = self.fixed_position
+        self.update()
 
     def update(self, *args):
         angle = self.game.atmosphere.wind.current_angle

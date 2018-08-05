@@ -8,8 +8,11 @@ import pygame as pg
 class Player:
 
     keys_ship_move = [pg.K_KP1, pg.K_KP3, pg.K_KP4, pg.K_KP6, pg.K_KP7, pg.K_KP9]
+    keys_ship_collect = [pg.K_c]
+    keys_inspect = [pg.K_i]
     keys_end_turn = [pg.K_KP_ENTER]
-    keys_all = keys_ship_move + keys_end_turn
+
+    keys_all = keys_ship_move + keys_end_turn + keys_ship_collect + keys_inspect
 
     def __init__(self, game, name, color):
         self.game = game
@@ -36,7 +39,16 @@ class Player:
 
     def handle_keys(self, event):
         if event.key in Player.keys_ship_move:
-            self.ship.handle_keys(event)
+            self.ship.handle_move(event)
+
+        if event.key in Player.keys_ship_collect:
+            self.ship.handle_collect(event)
+
+        if event.key in Player.keys_inspect:
+            print('\nPlayer: ' + self.name)
+            self.ship.print_full_info()
+            self.castle.print_full_info()
 
         if event.key == pg.K_KP_ENTER:
             self.game.player_turn_manager.end_turn()
+

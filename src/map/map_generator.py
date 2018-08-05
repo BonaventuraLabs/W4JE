@@ -2,14 +2,39 @@ from src.utilities.settings import *
 from src.map.tile import Tile
 import numpy as np
 from skimage import filters, feature
+from skimage.morphology import erosion, selem
 import pygame as pg
 
 
 class MapGenerator:
 
     @staticmethod
+    def generate_circle_map(game, sprites_group, rows, columns):
+        """Map with circular sea in the center."""
+        ones = np.ones((rows, columns), dtype=np.uint8)
+        ones[int(rows/2), int(columns/2)] = 0          # 0 pixel in the middle
+        se = selem.disk(int(min([rows, columns])/2))    # radius of se R = 1/3 of min(row,col)
+        ones = erosion(ones, selem=se)                  # expand (erode) the central 0 pixel to R
+
+        land_bool_map = ones > 0
+        mountains_bool_map = MapGenerator.generate_mountains(rows, columns)
+        coast_bool_map = feature.canny(255*np.array(land_bool_map, dtype=np.uint8))
+
+        # make mountains only on land:
+        mountains_bool_map = np.logical_and(mountains_bool_map, land_bool_map)
+
+        number_map = np.zeros((rows, columns), dtype=np.uint8)
+        number_map[land_bool_map] = TILE_TYPE_DICT['land']
+        number_map[coast_bool_map] = TILE_TYPE_DICT['sand']
+        number_map[mountains_bool_map] = TILE_TYPE_DICT['mountain']
+
+        return MapGenerator.generate_tiles(game, sprites_group, number_map)
+
+
+    @staticmethod
     def generate_from_numpy(game, sprites_group, rows, columns):
 
+        # Boolean maps (they are used for indexing numpy arrays.
         land_bool_map = MapGenerator.generate_land(rows, columns)
         mountains_bool_map = MapGenerator.generate_mountains(rows, columns)
         coast_bool_map = feature.canny(255*np.array(land_bool_map, dtype=np.uint8))
