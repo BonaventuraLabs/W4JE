@@ -4,7 +4,7 @@ from src.hud.scroll import Scroll
 from src.hud.minimap import Minimap
 from src.hud.button_end_turn import ButtonEndTurn
 from src.hud.compass import Compass, WindArrow
-from src.player.player_info import PlayerInfo
+from src.player.ship_info import ShipInfo
 
 class Hud:
     def __init__(self, game):
@@ -14,7 +14,7 @@ class Hud:
         self.scroll = Scroll(game, self)
         self.compass = Compass(game, self)
         self.wind_arrow = WindArrow(game, self)
-        self.player_info = PlayerInfo(game, self)
+        self.ship_info = ShipInfo(game, self)
         self.minimap = Minimap(game, self)
         self.turn_end_button = ButtonEndTurn(game, self)
 
@@ -22,7 +22,7 @@ class Hud:
         self.scroll.draw()
         self.compass.draw()
         self.wind_arrow.draw()
-        self.player_info.draw()
+        self.ship_info.draw()
         self.minimap.draw()
         self.turn_end_button.draw()
 

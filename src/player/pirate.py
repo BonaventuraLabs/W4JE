@@ -16,8 +16,9 @@ class Pirate:
         # shuffle available tiles:
         np.random.shuffle(self.game.map.spawn_tiles_list)
         row, col = self.game.map.spawn_tiles_list.pop()
-
-        self.ship = PirateShip(game, self, row, col)
+        self.ships = []
+        self.ships.append(PirateShip(game, self, row, col, 'Sloop'))
+        #self.ship = PirateShip(game, self, row, col, 'Sloop')
 
         # turn parameters
         # self.turn_finished = False
@@ -26,13 +27,20 @@ class Pirate:
         self.is_done = True
 
     def handle_move(self):
-        self.ship.handle_move()
+        self.ships[0].handle_move()
 
 
 class PirateShip(pg.sprite.Sprite):
-    def __init__(self, game, player, row, col):
+    def __init__(self, game, player, row, col, rank):
         self.game = game
         self.player = player
+        self.rank = rank
+        if self.rank == 'Sloop':
+            self.crew = 30
+        elif self.rank == 'Brigantine':
+            self.crew = 40
+        else:
+            self.crew = 50
         self.groups = self.game.sprites_unit, self.game.sprites_anim
 
         super().__init__(self.groups)
@@ -122,8 +130,9 @@ class PirateShip(pg.sprite.Sprite):
         # see, if there is a ship or castle or enemy in the target tile:
         target_unit = None
         for p in self.game.player_turn_manager.player_deque:
-            if (p.ship.r, p.ship.c) == (target_r, target_c):
-                target_unit = p.ship
+            for sh in p.ships:
+                if (sh.r, sh.c) == (target_r, target_c):
+                    target_unit =p.get_ship_by_xy(target_r, target_c)
             # if (p.castle.r, p.castle.c) == (target_r, target_c):
             #     target_units.append(p.castle)
 

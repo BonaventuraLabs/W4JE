@@ -4,12 +4,28 @@ from src.player.aura import Aura
 from src.player.battle import Battle
 import pygame as pg
 
+values = {'Sloop': 1, 'Brigantine': 2, 'Frigate': 3}
 
 class Ship(pg.sprite.Sprite):
 
-    def __init__(self, game, player, row, col):
+    keys_ship_move = [pg.K_t, pg.K_y, pg.K_h, pg.K_b, pg.K_v, pg.K_f]
+    keys_ship_collect = [pg.K_c]
+    keys_inspect = [pg.K_i]
+    keys_end_turn = [pg.K_g]
+
+    keys_all = keys_ship_move + keys_end_turn + keys_ship_collect + keys_inspect
+
+    def __init__(self, game, player, row, col, rank):
         self.game = game
         self.player = player
+        self.rank = rank
+        self.load = 0
+        if self.rank == 'Sloop':
+            self.crew = 30
+        elif self.rank == 'Brigantine':
+            self.crew = 40
+        else:
+            self.crew = 50
         self.groups = self.game.sprites_unit, self.game.sprites_anim
 
         #pg.sprite.Sprite.__init__(self, self.groups)
@@ -39,14 +55,32 @@ class Ship(pg.sprite.Sprite):
         self.moving_anim_on = False
 
         self.hp = 100
-        self.attack = 10
-        self.defense = 10
+        self.attack = values.get(self.rank) * 10
         self.destroyed = False
 
         self.items = []
+        self.is_done = True
+        self.is_current = False
+
+    def handle_keys(self, event):
+        if event.key in Ship.keys_ship_move:
+            self.analyze_move(event)
+
+        if event.key in Ship.keys_ship_collect:
+            self.handle_collect(event)
+
+        if event.key in Ship.keys_inspect:
+            print('\nPlayer: ' + self.player.name)
+            self.print_full_info()
+            self.player.castle.print_full_info()
+
+        if event.key == pg.K_g:
+            self.is_done = True
+            self.is_current = False
+            self.moves_left = 0
 
     def draw(self):
-        if self.player.is_current:
+        if self.is_current:
             self.game.screen.blit(self.aura.image, self.game.camera.apply(self.aura))
         self.game.screen.blit(self.image, self.game.camera.apply(self))
         label, label_rect = self.get_name_label()
@@ -87,7 +121,7 @@ class Ship(pg.sprite.Sprite):
                 # self.player.unset_current()
 
         # shuffle aura
-        if self.player.is_current:
+        if self.is_current:
             self.aura.update()
 
     def recalc_center(self):
@@ -113,8 +147,8 @@ class Ship(pg.sprite.Sprite):
             return
 
         # movement direction:
-        move_dir_dict = {pg.K_KP1: 'ld', pg.K_KP3: 'rd', pg.K_KP4: 'l',
-                         pg.K_KP6: 'r', pg.K_KP7: 'lu', pg.K_KP9: 'ru'}
+        move_dir_dict = {pg.K_v: 'ld', pg.K_b: 'rd', pg.K_f: 'l',
+                         pg.K_h: 'r', pg.K_t: 'lu', pg.K_y: 'ru'}
         cur_move = move_dir_dict[event.key]
 
         # get wind penalty:
@@ -144,8 +178,9 @@ class Ship(pg.sprite.Sprite):
         # see, if there is a ship or castle or enemy in the target tile:
         target_unit = None
         for p in self.game.player_turn_manager.player_deque:
-            if (p.ship.r, p.ship.c) == (target_r, target_c):
-                target_unit = p.ship
+            for sh in p.ships:
+                if (sh.r, sh.c) == (target_r, target_c):
+                    target_unit = p.get_ship_by_xy(target_r, target_c)
             # if (p.castle.r, p.castle.c) == (target_r, target_c):
             #     target_units.append(p.castle)
 
@@ -275,8 +310,8 @@ class Ship(pg.sprite.Sprite):
 
     def print_full_info(self):
         print('---=== SHIP ===---')
-        print('Health: ' + str(self.hp))
-        print('Defense: ' + str(self.defense))
+        print('Rank: ' + str(self.rank))
+        print('Crew: ' + str(self.crew))
         print('Attack: ' + str(self.attack))
         print('Items:')
         if len(self.items) > 0:

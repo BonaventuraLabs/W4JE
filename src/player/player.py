@@ -7,12 +7,8 @@ import pygame as pg
 
 class Player:
 
-    keys_ship_move = [pg.K_KP1, pg.K_KP3, pg.K_KP4, pg.K_KP6, pg.K_KP7, pg.K_KP9]
-    keys_ship_collect = [pg.K_c]
-    keys_inspect = [pg.K_i]
-    keys_end_turn = [pg.K_KP_ENTER]
+   # original # keys_ship_move = [pg.K_KP1, pg.K_KP3, pg.K_KP4, pg.K_KP6, pg.K_KP7, pg.K_KP9]
 
-    keys_all = keys_ship_move + keys_end_turn + keys_ship_collect + keys_inspect
 
     def __init__(self, game, name, color):
         self.game = game
@@ -29,7 +25,11 @@ class Player:
         # col = np.random.randint(0, MAP_TILE_W)
 
         self.castle = Castle(game, self, row, col)
-        self.ship = Ship(game, self, row, col)
+        self.ships = []
+        self.ships.append(Ship(game, self, row, col, 'Sloop'))
+        self.ships.append(Ship(game, self, row, col, 'Sloop'))
+        self.ships.append(Ship(game, self, row, col, 'Brigantine'))
+
 
         # turn parameters
         # self.turn_finished = False
@@ -37,19 +37,11 @@ class Player:
         self.is_current = False
         self.is_done = True
 
-    def handle_keys(self, event):
-        if event.key in Player.keys_ship_move:
-            self.ship.analyze_move(event)
+    def get_ship_by_xy(self, x, y):
+        for s in self.ships:
+            if s.r == x:
+                if s.c == y:
+                    return s
 
-        if event.key in Player.keys_ship_collect:
-            self.ship.handle_collect(event)
 
-        if event.key in Player.keys_inspect:
-            print('\nPlayer: ' + self.name)
-            self.ship.print_full_info()
-            self.castle.print_full_info()
-
-        if event.key == pg.K_KP_ENTER:
-            self.is_done = True
-            #self.game.player_turn_manager.end_turn()
 
