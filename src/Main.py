@@ -42,7 +42,7 @@ class Game:
         self.player_turn_manager = PlayerTurnManager(self)
 
         self.mouse_drag = False
-        self.mouse_drag_xy = self.player_turn_manager.current_player.ship.xy
+        self.mouse_drag_xy = self.player_turn_manager.current_player.castle.xy
         self.playing = True
 
         self.debug_mode = False

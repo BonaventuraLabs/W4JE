@@ -12,7 +12,8 @@ class Wind:
         self.current_direction = np.random.choice(list(self.directions.keys()))
         self.current_angle = self.directions[self.current_direction]
 
-        self.strengths = [0, 1, 2, 3, 4]
+        #self.strengths = [0, 1, 2, 3, 4]
+        self.strengths = [2, 3, 4]
         self.current_strength = 3
         # 0 - shtil, 4 - storm?
 

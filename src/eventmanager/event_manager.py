@@ -1,6 +1,7 @@
 import pygame as pg
 from src.player.player import Player
 from src.hud.camera import Camera
+from src.player.ship import Ship
 
 
 class EventManager:
@@ -21,9 +22,9 @@ class EventManager:
                     # debug mode
                     self.game.debug_mode = not self.game.debug_mode
 
-                elif event.key in Player.keys_all:
-                    # Player keys
-                    self.game.player_turn_manager.current_player.handle_keys(event)
+                elif event.key in Ship.keys_all:
+                    # Ship keys
+                    self.game.player_turn_manager.current_ship.handle_keys(event)
 
                 elif event.key in Camera.keys_all:
                     # Camera keys
