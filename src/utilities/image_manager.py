@@ -24,6 +24,15 @@ class ImageManager:
         ship = ImageManager.load(SHIP)
         self.ship = pg.transform.scale(ship, (TILEWIDTH, TILEHEIGHT))
 
+        sloop = ImageManager.load(SLOOP)
+        self.sloop = pg.transform.scale(sloop, (TILEWIDTH, TILEHEIGHT))
+
+        brigantine = ImageManager.load(BRIGANTINE)
+        self.brigantine = pg.transform.scale(brigantine, (TILEWIDTH, TILEHEIGHT))
+
+        frigate = ImageManager.load(FRIGATE)
+        self.frigate = pg.transform.scale(frigate, (TILEWIDTH, TILEHEIGHT))
+
         wind_arrow = ImageManager.load(WIND_ARROW)
         self.wind_arrow = pg.transform.scale(wind_arrow, (30, 100))
 

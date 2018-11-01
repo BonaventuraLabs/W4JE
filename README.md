@@ -11,19 +11,13 @@ Therefore we start!
 Current controls:
 Ship Movement:
 
-Numpad 1,3,4,6,7,9:
- 7    9
-  \  /
-4--  --6
-  /  \
- 1    3
-
-Now - it is easier to test on laptop, which does not have keypad.
  t    y
   \  /
 f--  --h
   /  \
  v    b
+
+These controls are better suited for hexagone moves
 
 g - end of turn
 
@@ -40,7 +34,15 @@ Key c:
 collect item
 
 Key i:
-info on current player
+info on current ship
 
 Key d:
 debug mode.
+
+This update:
+Image of the ship and sailing length depend on type of the ship.
+Turn ends automatically if there are no moves left.
+Battle is re-worked. 
+Turn model is re-worked to skip defeated players and ships in the turn.
+Camera is centralised on the moving ship.
+Some extra ship information is added to the left hand side pane.

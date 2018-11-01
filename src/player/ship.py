@@ -22,16 +22,22 @@ class Ship(pg.sprite.Sprite):
         self.load = 0
         if self.rank == 'Sloop':
             self.crew = 30
+            self.moves_per_turn = 12
+            self.image = self.game.image_manager.sloop
         elif self.rank == 'Brigantine':
             self.crew = 40
+            self.moves_per_turn = 10
+            self.image = self.game.image_manager.brigantine
         else:
             self.crew = 50
+            self.moves_per_turn = 8
+            self.image = self.game.image_manager.frigate
         self.groups = self.game.sprites_unit, self.game.sprites_anim
 
         #pg.sprite.Sprite.__init__(self, self.groups)
         super().__init__(self.groups)
 
-        self.image = self.game.image_manager.ship
+
         self.aura = Aura(self)
         self.rect = self.image.get_rect()
 
@@ -48,7 +54,6 @@ class Ship(pg.sprite.Sprite):
 
         self.rect.center = self.xy
 
-        self.moves_per_turn = SHEEP_SPEED  # equivalent of speed
         self.moves_left = self.moves_per_turn
         self.move_penalty = 0  # nothing yet.
 
@@ -82,6 +87,11 @@ class Ship(pg.sprite.Sprite):
     def draw(self):
         if self.is_current:
             self.game.screen.blit(self.aura.image, self.game.camera.apply(self.aura))
+            if self.destroyed:
+                self.moves_left = 0
+                self.moves_per_turn = 0
+                self.is_done = True
+                self.is_current = False
         self.game.screen.blit(self.image, self.game.camera.apply(self))
         label, label_rect = self.get_name_label()
         self.game.screen.blit(label, self.game.camera.apply(label_rect))
@@ -120,9 +130,13 @@ class Ship(pg.sprite.Sprite):
                 self.aura.set_center(self.xy)
                 # self.player.unset_current()
 
+       # self.recalc_center()
+
+
         # shuffle aura
         if self.is_current:
             self.aura.update()
+            self.game.camera.update(self.rect.x, self.rect.y)
 
     def recalc_center(self):
         # save the old values:
@@ -180,13 +194,14 @@ class Ship(pg.sprite.Sprite):
         for p in self.game.player_turn_manager.player_deque:
             for sh in p.ships:
                 if (sh.r, sh.c) == (target_r, target_c):
-                    target_unit = p.get_ship_by_xy(target_r, target_c)
+                    if not p.get_ship_by_xy(target_r, target_c).destroyed:
+                        target_unit = p.get_ship_by_xy(target_r, target_c)
             # if (p.castle.r, p.castle.c) == (target_r, target_c):
             #     target_units.append(p.castle)
 
         if target_unit is not None:
             if mov_forced:
-                self.moves_left = 0
+                #self.moves_left = 0 # no need to stop the shooting ship
                 battle = Battle(self, target_unit)
                 battle.start()
                 return
@@ -283,11 +298,17 @@ class Ship(pg.sprite.Sprite):
         # we have to start from OLD r,c:
         self.rect.center = self.xy_prev  # self.xy
         self.aura.set_center(self.rect.center)
+        if self.moves_left <= 0:
+            print('\n' + self.player.name + ': ship is out of moves.')
+            self.is_done = True
+            self.is_current = False
 
     def handle_collect(self, event):
         # check if enough moves are left:
         if self.moves_left <= 0:
             print('\n' + self.player.name + ': ship is out of moves.')
+            self.is_done = True
+            self.is_current = False
             return
         else:
             cur_tile = self.game.map.tiles_dict['%s.%s' % (self.r, self.c)]
@@ -303,10 +324,13 @@ class Ship(pg.sprite.Sprite):
         print('Click : ' + self.player.name + ' ship')
 
     def make_destroyed(self):
-        self.destroyed = True
         self.moves_left = 0
         self.moves_per_turn = 0
         self.image = self.game.image_manager.ship_wreck
+        self.destroyed = True
+        self.is_done = True
+        self.is_current = False
+
 
     def print_full_info(self):
         print('---=== SHIP ===---')
