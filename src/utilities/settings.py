@@ -1,7 +1,7 @@
 import os
 
 
-SHEEP_SPEED = 10  # moves (1 tile) per turn
+#SHEEP_SPEED = 10  # moves (1 tile) per turn
 TITLE = 'W4JE'
 
 WIDTH = 1000
@@ -42,7 +42,10 @@ TILE_SAND_IMAGE = 'tile_sand_1.png'
 WIND_ARROW = 'wind_arrow_2.png'
 HUD_SCROLL = 'hud_scroll_2.png'
 HUD_COMPASS = 'hud_compass_3.png'
-SHIP = 'ship_1.png'
+SHIP = 'ship_3.png'  # this will be removed after I am done with Frigate image
+SLOOP = 'ship_1.png'
+BRIGANTINE = 'ship_2.png'
+FRIGATE = 'ship_3.png'
 PIRATE = 'image_pirate_1.png'
 SHIP_WRECK = 'image_ship_wreck_1.png'
 SEAGULL = 'image_seagull_1.png'

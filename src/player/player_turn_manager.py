@@ -31,23 +31,23 @@ class PlayerTurnManager:
         self.current_ship.is_done = False
         self.current_ship.moves_left = self.current_ship.moves_per_turn
         self.current_ship.recalc_center()
-        self.game.camera.update(self.current_ship.rect.x, self.current_ship.rect.y)
-
-        #for s in self.current_player.ships:
-        #    self.current_ship = s
-        #    self.current_ship.is_current = True
-        #    self.current_ship.is_done = False
-        #    self.current_ship.moves_left = s.moves_per_turn
-        #    self.current_ship.recalc_center()
-        #    self.game.camera.update(s.rect.x, s.rect.y)
+        if not self.current_ship.destroyed:
+            self.game.camera.update(self.current_ship.rect.x, self.current_ship.rect.y)
 
 
     def on_end_turn(self):
-        #for s in self.current_player.ships:
-        #    c = s.is_current
-        #    d = s.is_done
-        #    print(s.rank, c, d)
         self.current_player.is_current = False
+
+        # Generate next turn:
+        PlayerTurnManager.global_turn_count += 1
+
+        # go to next player; rotate player deck once
+        self.player_deque.rotate(1)
+        self.start_turn(self.player_deque[0], self.player_deque[0].ships[0])
+
+        # update things
+        self.game.atmosphere.on_turn_end()
+        self.game.hud.on_turn_end()
 
     def check_state(self):
 
@@ -60,7 +60,7 @@ class PlayerTurnManager:
             else:
                 self.current_player.is_done = True
 
-        # if the current ship is done
+        # if the current ship is done check if it is players last ship and if yes pass turn to the next player
         if self.current_ship.is_done:
             self.current_ship.is_current = False
             ind = self.current_player.ships.index(self.current_ship)
@@ -70,16 +70,7 @@ class PlayerTurnManager:
                 print('PLAYER IS DONE')
                 self.on_end_turn()
 
-                # Generate next turn:
-                PlayerTurnManager.global_turn_count += 1
 
-                # go to next player; rotate player deck once
-                self.player_deque.rotate(1)
-                self.start_turn(self.player_deque[0], self.player_deque[0].ships[0])
-
-                # update things
-                self.game.atmosphere.on_turn_end()
-                self.game.hud.on_turn_end()
                 return
             self.current_ship = self.current_player.ships[ind + 1]
             self.current_ship.is_current = True
@@ -93,15 +84,6 @@ class PlayerTurnManager:
 
         # if player is done: end turn
         self.on_end_turn()
-
-        # Generate next turn:
-        PlayerTurnManager.global_turn_count += 1
-
-
-
-        # go to next player; rotate player deck once
-        self.player_deque.rotate(1)
-        self.start_turn(self.player_deque[0], self.player_deque[0].ships[0])
 
         # update things
         self.game.atmosphere.on_turn_end()

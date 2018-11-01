@@ -26,7 +26,7 @@ class ShipInfo:
         label_rect_1.topleft = self.rect.topleft
         self.game.screen.blit(label_1, label_rect_1)
 
-        text = 'Coordinates: ' + str(cur_ship.r) + '-' + str(cur_ship.c)
+        text = 'Coordinates: ' + str(cur_ship.r) + '-' + str(cur_ship.c) + ' crew ' + str(cur_ship.crew)
         label_2 = self.game.font.render(text, True, BLACK)
         label_rect_2 = label_2.get_rect()
         label_rect_2.left = self.rect.left

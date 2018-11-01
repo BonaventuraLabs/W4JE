@@ -13,9 +13,13 @@ class Pirate:
         self.name = name
 
         # position at generation:
-        # shuffle available tiles:
-        np.random.shuffle(self.game.map.spawn_tiles_list)
-        row, col = self.game.map.spawn_tiles_list.pop()
+        # shuffle available tiles: TEMPORARY DISABLED
+        #np.random.shuffle(self.game.map.spawn_tiles_list)
+        #row, col = self.game.map.spawn_tiles_list.pop()
+        row, col = [30, 40]
+
+
+
         self.ships = []
         self.ships.append(PirateShip(game, self, row, col, 'Sloop'))
         #self.ship = PirateShip(game, self, row, col, 'Sloop')
@@ -29,6 +33,12 @@ class Pirate:
     def handle_move(self):
         self.ships[0].handle_move()
 
+    def get_ship_by_xy(self, x, y):
+        for s in self.ships:
+            if s.r == x:
+                if s.c == y:
+                    return s
+
 
 class PirateShip(pg.sprite.Sprite):
     def __init__(self, game, player, row, col, rank):
@@ -37,10 +47,13 @@ class PirateShip(pg.sprite.Sprite):
         self.rank = rank
         if self.rank == 'Sloop':
             self.crew = 30
+            self.moves_per_turn = 12
         elif self.rank == 'Brigantine':
             self.crew = 40
+            self.moves_per_turn = 10
         else:
             self.crew = 50
+            self.moves_per_turn = 8
         self.groups = self.game.sprites_unit, self.game.sprites_anim
 
         super().__init__(self.groups)
@@ -62,7 +75,7 @@ class PirateShip(pg.sprite.Sprite):
 
         self.rect.center = self.xy
 
-        self.moves_per_turn = SHEEP_SPEED  # equivalent of speed
+        #self.moves_per_turn = SHEEP_SPEED  # equivalent of speed
         self.moves_left = self.moves_per_turn
         self.move_penalty = 0  # nothing yet.
 
@@ -75,6 +88,8 @@ class PirateShip(pg.sprite.Sprite):
 
         self.chance_to_change_dir = 10  # percents,
         self.chosen_direction = np.random.choice(['l', 'lu', 'ru', 'r', 'rd', 'ld'])
+        self.is_done = True
+        self.is_current = False
 
     def get_another_direction(self):
         if np.random.randint(0, 100) < self.chance_to_change_dir:
@@ -91,6 +106,11 @@ class PirateShip(pg.sprite.Sprite):
         self.rect.center = self.xy
 
     def draw(self):
+        if self.destroyed:
+            self.moves_left = 0
+            self.moves_per_turn = 0
+            self.is_done = True
+            self.is_current = False
         self.game.screen.blit(self.image, self.game.camera.apply(self))
         label, label_rect = self.get_name_label()
         self.game.screen.blit(label, self.game.camera.apply(label_rect))
@@ -260,3 +280,5 @@ class PirateShip(pg.sprite.Sprite):
             if abs(dx) < 1 and abs(dy) < 1:
                 self.moving_anim_on = False
                 self.rect.center = self.xy
+
+
