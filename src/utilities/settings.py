@@ -4,22 +4,22 @@ import os
 #SHEEP_SPEED = 10  # moves (1 tile) per turn
 TITLE = 'W4JE'
 
-WIDTH = 1000
-HEIGHT = 800
+WIDTH = 1008
+HEIGHT = 1152
 MAP_TILE_H = 50
-MAP_TILE_W = 100
+MAP_TILE_W = 50
 
 CAMERA_SPEED = 15 #pix
 HUD_HEIGHT = 80
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
+RED = (255, 55, 0, 160)
+GREEN = (0, 255, 0, 160)
+BLUE = (0, 0, 255, 160)
 LIGHTGREY = (100, 100, 100)
 BGCOLOR = LIGHTGREY
-YELLOW = (255, 255, 0)
+YELLOW = (255, 255, 0, 160)
 
 # original stile size: (w=28, h = 32)
 TILEHEIGHT = 64 #32
@@ -50,6 +50,7 @@ PIRATE = 'image_pirate_1.png'
 SHIP_WRECK = 'image_ship_wreck_1.png'
 SEAGULL = 'image_seagull_1.png'
 CASTLE = 'image_castle_1.png'
+VILLAGE = 'image_village_1.png'
 
 CLOUDS_1_6 = ['image_cloud_', '.png']
 FISH_1_2 = ['image_fish_', '.png']
@@ -60,4 +61,6 @@ TILE_TYPE_DICT = {0: 'sea', 'sea': 0,
                   1: 'land', 'land': 1,
                   2: 'sand', 'sand': 2,
                   3: 'mountain', 'mountain': 3}
+
+GOLD_TO_WIN = 7
 

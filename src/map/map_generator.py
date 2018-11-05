@@ -4,6 +4,7 @@ import numpy as np
 from skimage import filters, feature
 from skimage.morphology import erosion, selem
 import pygame as pg
+from os import path
 
 
 class MapGenerator:
@@ -134,13 +135,14 @@ class MapGenerator:
         mini_map = pg.surfarray.make_surface(rgb)
         return mini_map
 
+# BELOW IS THE ORIGINAL PLAN
     @staticmethod
     def generate_from_txt(game, sprites_group):
         file_path = os.path.join(FOLDER_RESOURCES, 'map_1.txt')
         data = []
         with open(file_path, 'rt') as f:
             for line in f:
-                data.append(line)
+                data.append(line.rstrip())
         rows = len(data)
         cols = len(data[0])
         number_map = np.zeros((rows, cols), dtype=np.uint8)
@@ -149,19 +151,4 @@ class MapGenerator:
             for col, el in enumerate(tiles):
                 number_map[row, col] = int(el)
 
-        tile_dict = MapGenerator.generate_tiles(game, sprites_group, number_map)
-        return tile_dict
-
-        #         # generate a tile:
-        #         tile_dict[str(row) + '.' + str(col)] = Tile(game, row, col, tile_type)
-        #
-        # MapInfo = namedtuple('MapInfo',
-        #                      ['tile_dict', 'width_in_tile_numbers', 'height_in_tile_numbers',
-        #                      'height_in_pix', 'width_in_pix'])
-        #
-        # map_info = MapInfo(tile_dict=tile_dict,
-        #                    width_in_tile_numbers=width_in_tiles_numbers,
-        #                    height_in_tile_numbers=height_in_tiles_numbers,
-        #                    height_in_pix=height_in_pix,
-        #                    width_in_pix=width_in_pix)
-        # return map_info
+        return MapGenerator.generate_tiles(game, sprites_group, number_map)

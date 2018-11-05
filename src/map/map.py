@@ -17,7 +17,10 @@ class Map:
         self.width_in_pix = TILEWIDTH * MAP_TILE_W
 
         # simple map with circular sea in the middle:
-        self.tiles_dict = MapGenerator.generate_circle_map(game, self.sprites_map, MAP_TILE_H, MAP_TILE_W)
+        #self.tiles_dict = MapGenerator.generate_circle_map(game, self.sprites_map, MAP_TILE_H, MAP_TILE_W)
+        # map from txt
+        self.tiles_dict = MapGenerator.generate_from_txt(game, self.sprites_map)
+
         # randomly generated map:
         # self.tiles_dict = MapGenerator.generate_from_numpy(game, self.sprites_map, MAP_TILE_H, MAP_TILE_W)
 

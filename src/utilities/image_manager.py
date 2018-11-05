@@ -46,7 +46,10 @@ class ImageManager:
         self.seagull = pg.transform.scale(seagull, (40, 20))
 
         castle = ImageManager.load(CASTLE)
-        self.castle = pg.transform.scale(castle, (3*TILEWIDTH, 3*TILEHEIGHT))
+        self.castle = pg.transform.scale(castle, (2*TILEWIDTH, 2*TILEHEIGHT))
+
+        village = ImageManager.load(VILLAGE)
+        self.village = pg.transform.scale(village, (TILEWIDTH, TILEHEIGHT))
 
         ship_wreck = ImageManager.load(SHIP_WRECK)
         self.ship_wreck = pg.transform.scale(ship_wreck, (TILEWIDTH, TILEHEIGHT))

@@ -3,15 +3,16 @@ from src.utilities.settings import *
 from src.player.aura import Aura
 from src.player.battle import Battle
 import pygame as pg
+import random
 
 values = {'Sloop': 1, 'Brigantine': 2, 'Frigate': 3}
 
 class Ship(pg.sprite.Sprite):
 
-    keys_ship_move = [pg.K_t, pg.K_y, pg.K_h, pg.K_b, pg.K_v, pg.K_f]
-    keys_ship_collect = [pg.K_c]
-    keys_inspect = [pg.K_i]
-    keys_end_turn = [pg.K_g]
+    keys_ship_move = [pg.K_u, pg.K_i, pg.K_k, pg.K_m, pg.K_n, pg.K_h]
+    keys_ship_collect = [pg.K_b]
+    keys_inspect = [pg.K_o]
+    keys_end_turn = [pg.K_j]
 
     keys_all = keys_ship_move + keys_end_turn + keys_ship_collect + keys_inspect
 
@@ -19,7 +20,6 @@ class Ship(pg.sprite.Sprite):
         self.game = game
         self.player = player
         self.rank = rank
-        self.load = 0
         if self.rank == 'Sloop':
             self.crew = 30
             self.moves_per_turn = 12
@@ -59,6 +59,9 @@ class Ship(pg.sprite.Sprite):
 
         self.moving_anim_on = False
 
+        self.load = 0
+        self.load_turn = 0
+
         self.hp = 100
         self.attack = values.get(self.rank) * 10
         self.destroyed = False
@@ -66,6 +69,7 @@ class Ship(pg.sprite.Sprite):
         self.items = []
         self.is_done = True
         self.is_current = False
+
 
     def handle_keys(self, event):
         if event.key in Ship.keys_ship_move:
@@ -79,7 +83,7 @@ class Ship(pg.sprite.Sprite):
             self.print_full_info()
             self.player.castle.print_full_info()
 
-        if event.key == pg.K_g:
+        if event.key == pg.K_j:
             self.is_done = True
             self.is_current = False
             self.moves_left = 0
@@ -136,6 +140,7 @@ class Ship(pg.sprite.Sprite):
         # shuffle aura
         if self.is_current:
             self.aura.update()
+            # OPEN it when needed focus on Ship
             self.game.camera.update(self.rect.x, self.rect.y)
 
     def recalc_center(self):
@@ -161,8 +166,8 @@ class Ship(pg.sprite.Sprite):
             return
 
         # movement direction:
-        move_dir_dict = {pg.K_v: 'ld', pg.K_b: 'rd', pg.K_f: 'l',
-                         pg.K_h: 'r', pg.K_t: 'lu', pg.K_y: 'ru'}
+        move_dir_dict = {pg.K_n: 'ld', pg.K_m: 'rd', pg.K_h: 'l',
+                         pg.K_k: 'r', pg.K_u: 'lu', pg.K_i: 'ru'}
         cur_move = move_dir_dict[event.key]
 
         # get wind penalty:
@@ -204,6 +209,7 @@ class Ship(pg.sprite.Sprite):
                 #self.moves_left = 0 # no need to stop the shooting ship
                 battle = Battle(self, target_unit)
                 battle.start()
+                self.attack = values.get(self.rank) * 10
                 return
             else:
                 print('\nIf you really want to attack, press (Ctrl+KeyPad)')
@@ -291,6 +297,17 @@ class Ship(pg.sprite.Sprite):
         self.r = target_r
         self.c = target_c
         self.recalc_center()
+        # check if touched own village
+        for v in self.player.villages:
+            if v.r == self.r and v.c == self.c:
+                # control if 7 turns passed since last gold pickup.
+                t = self.game.player_turn_manager.global_turn_count
+                if (self.load_turn + 28) < t:
+                    # prevent players to stay by the village and keep picking up gold if load is 3 times more than capacity
+                    if self.load <= values.get(self.rank) * 3:
+                        self.load += values.get(self.rank)
+                        print('My new load is: ', self.load)
+                        self.load_turn = t
 
         # this part is for animation.
         # set animation ON
@@ -302,6 +319,16 @@ class Ship(pg.sprite.Sprite):
             print('\n' + self.player.name + ': ship is out of moves.')
             self.is_done = True
             self.is_current = False
+
+        # here the ship touches own castle
+        if self.r == self.player.castle.r and self.c == self.player.castle.c:
+            self.player.castle.gold += self.load
+            self.load = 0
+            print('Castle has now ', self.player.castle.gold, ' gold')
+            if self.player.castle.gold == GOLD_TO_WIN:
+                print('Player ', self.player, ' has won the game!')
+                # Here should be transfer to Game Over function.
+
 
     def handle_collect(self, event):
         # check if enough moves are left:
@@ -319,6 +346,32 @@ class Ship(pg.sprite.Sprite):
             item = cur_tile.remove_one_item()
             if item:
                 self.items.append(item)
+                luck = random.randint(1, 8)
+                print('Luck = ', luck)
+                if luck == 1:
+                    self.crew += 10
+                    print('Your crew increased by 10!')
+                if luck == 2:
+                    self.crew -= 10
+                    print('Your crew decreased by 10.')
+                if luck == 3:
+                    self.load += 1
+                    print('You got 1 gold!')
+                if luck == 4:
+                    self.load -= 1
+                    print('You lost 1 gold')
+                if luck == 5:
+                    self.attack += 10
+                    print('Your attack increased by 10 for one strike!')
+                if luck == 6:
+                    self.attack -= 10
+                    print('Your attack decreased by 10 for one strike.')
+                if luck == 7:
+                    self.moves_left += 10
+                    print('Your sailing path increased by 10 for 1 turn!')
+                if luck == 8:
+                    self.moves_left -= 10
+                    print('Your sailing path decreased by 10 for 1 turn.')
 
     def on_click(self):
         print('Click : ' + self.player.name + ' ship')
@@ -337,6 +390,7 @@ class Ship(pg.sprite.Sprite):
         print('Rank: ' + str(self.rank))
         print('Crew: ' + str(self.crew))
         print('Attack: ' + str(self.attack))
+        print('Load: ' + str(self.load))
         print('Items:')
         if len(self.items) > 0:
             for item in self.items:

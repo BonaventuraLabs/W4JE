@@ -39,10 +39,9 @@ info on current ship
 Key d:
 debug mode.
 
-This update:
-Image of the ship and sailing length depend on type of the ship.
-Turn ends automatically if there are no moves left.
-Battle is re-worked. 
-Turn model is re-worked to skip defeated players and ships in the turn.
-Camera is centralised on the moving ship.
-Some extra ship information is added to the left hand side pane.
+THis update: 
+1) Map generation based on txt file.
+2) The generated map is now in the originally planned form.
+3) Villages where gold can be picked up per user.
+4) If a user stops by own village he gets gold and when he delivers gold back to the home base town it is counted. So, there is game winning situation now available.
+5) Some new improved tile graphics (mountains, sand).

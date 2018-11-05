@@ -24,6 +24,7 @@ class Aura(pg.sprite.Sprite):
         # square surface, 2*tile:
         w = 2 * TILEWIDTH
         sel_surf = pg.Surface((w, w), pg.SRCALPHA, 32).convert_alpha()
+        sel_surf.set_alpha(128)
 
         # draw circle in the center of this surface:
         center = (int(TILEWIDTH), int(TILEWIDTH))

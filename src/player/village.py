@@ -3,20 +3,19 @@ from src.utilities.settings import *
 import numpy as np
 
 
-class Castle(pg.sprite.Sprite):
+class Village(pg.sprite.Sprite):
     def __init__(self, game, player, row, col):
         self.game = game
         self.player = player
-        self.groups = self.game.sprites_unit #, self.game.sprites_anim
+        self.groups = self.game.sprites_unit
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.image = self.game.image_manager.castle
+        self.image = self.game.image_manager.village
 
         self.rect = self.image.get_rect()
         self.r = row
         self.c = col
         self.xy = self.game.map.rc_to_xy(self.r, self.c)
         self.rect.center = self.xy
-        self.gold = 0
 
     def draw(self):
         self.game.screen.blit(self.image, self.game.camera.apply(self))
