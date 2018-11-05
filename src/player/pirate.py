@@ -7,7 +7,7 @@ from src.player.battle import Battle
 
 class Pirate:
 
-    def __init__(self, game, name, color):
+    def __init__(self, game, name, color, rw, cl):
         self.game = game
         self.color = color
         self.name = name
@@ -16,7 +16,7 @@ class Pirate:
         # shuffle available tiles: TEMPORARY DISABLED
         #np.random.shuffle(self.game.map.spawn_tiles_list)
         #row, col = self.game.map.spawn_tiles_list.pop()
-        row, col = [30, 40]
+        row, col = [rw, cl]
 
 
 

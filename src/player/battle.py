@@ -15,8 +15,8 @@ class Battle:
         x = random.randint(1, 10)
         print('random = ' + str(x))
         if x > 5:  # attacking ship lost
-             self.a_ship.crew -= v2
-             print('attacker minus ' + str(v2))
+            self.a_ship.crew -= v2
+            print('attacker minus ' + str(v2))
         else:
             self.d_ship.crew -= v1
             print('defender minus ' + str(v1))
@@ -24,7 +24,6 @@ class Battle:
             self.a_ship.make_destroyed()
         if self.d_ship.crew <= 0:
             self.d_ship.make_destroyed()
-
 
 
     def start(self):

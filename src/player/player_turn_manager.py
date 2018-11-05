@@ -12,10 +12,10 @@ class PlayerTurnManager:
 
     def __init__(self, game):
         self.game = game
-        self.player_deque = deque([Player(self.game, 'Dimas', YELLOW),
-                                   Player(self.game, 'Alex', RED),
-                                   Player(self.game, 'Danila', GREEN),
-                                   Pirate(self.game, 'Long John', BLACK)])
+        self.player_deque = deque([Player(self.game, 'Dimas', YELLOW, 4, 25),
+                                   Player(self.game, 'Alex', RED, 25, 4),
+                                   Player(self.game, 'Danila', GREEN, 25, 45),
+                                   Pirate(self.game, 'Long John', BLACK, 25, 25)])
         self.current_player = None
         self.current_ship = None
         self.start_turn(self.player_deque[0], self.player_deque[0].ships[0])
@@ -38,7 +38,7 @@ class PlayerTurnManager:
     def on_end_turn(self):
         self.current_player.is_current = False
 
-        # Generate next turn:
+        # Generate next turn. It is actually pushing next player turn, not a bew round of user turns.
         PlayerTurnManager.global_turn_count += 1
 
         # go to next player; rotate player deck once
@@ -69,9 +69,8 @@ class PlayerTurnManager:
                 # if player is done: end turn
                 print('PLAYER IS DONE')
                 self.on_end_turn()
-
-
                 return
+
             self.current_ship = self.current_player.ships[ind + 1]
             self.current_ship.is_current = True
             self.current_ship.is_done = False
@@ -86,8 +85,8 @@ class PlayerTurnManager:
         self.on_end_turn()
 
         # update things
-        self.game.atmosphere.on_turn_end()
-        self.game.hud.on_turn_end()
+       # self.game.atmosphere.on_turn_end()
+        #self.game.hud.on_turn_end()
 
 
 

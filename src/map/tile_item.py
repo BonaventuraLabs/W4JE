@@ -37,5 +37,3 @@ class Animal:
         self.name = np.random.choice(Animal.name_list)
         self.rect = self.image.get_rect()
 
-
-
