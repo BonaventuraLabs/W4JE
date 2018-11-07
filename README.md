@@ -1,6 +1,3 @@
-Attention - some changes made.
-Battle added, move keys are different now, wind can't be zero strength to speed up testing
-
 
 # W4JE
 This is a a project of two friends who decided one day to learn python.
