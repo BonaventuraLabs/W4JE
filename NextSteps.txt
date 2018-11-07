@@ -1,0 +1,10 @@
+DEVELOPMENT ROADMAP
+- Make port screen where player can buy new ships during his turn. DONE 06.11.2018.
+- Make sure winning mechanism works for both win variants: destroy all enemy ships, bring to own port 7 gold. Make Win! screen with option to start again.
+- Implement animation of sinking ship.
+- Improve hud info about current ship to show ship's image, current crew, load, shoot strength (canon icon).
+- Improve minimap to show current location of all ships.
+- Make separate images of ships depending on sail direction and battle. Also make animation of battle shots.
+- Implement AI depending on nation.
+- Implement start screen with options to select nation and number of real players, the rest will be AI.
+- Have professional graphics maker to draw: start screen, win screen, port screen, tiles, ships (small and big) including rotating images for each type of ships, sinking and shooting animations.

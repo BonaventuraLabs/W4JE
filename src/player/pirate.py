@@ -29,6 +29,7 @@ class Pirate:
         # not his turn at creation:
         self.is_current = False
         self.is_done = True
+        self.show_port = False
 
     def handle_move(self):
         self.ships[0].handle_move()

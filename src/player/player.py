@@ -20,7 +20,11 @@ class Player:
         # shuffle available tiles:
         #np.random.shuffle(self.game.map.spawn_tiles_list)
         #row, col = self.game.map.spawn_tiles_list.pop()
+
         row, col = [rw, cl]
+
+        #self.row = rw
+        #self.col = cl
 
         # random (even on land):
         # row = np.random.randint(0, MAP_TILE_H)

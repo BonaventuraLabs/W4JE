@@ -1,11 +1,13 @@
 import numpy as np
 from src.utilities.settings import *
-from src.player.aura import Aura
+from src.player.explosion import Explosion
 from src.player.battle import Battle
+from src.player.aura import Aura
 import pygame as pg
 import random
 
 values = {'Sloop': 1, 'Brigantine': 2, 'Frigate': 3}
+
 
 class Ship(pg.sprite.Sprite):
 
@@ -13,8 +15,9 @@ class Ship(pg.sprite.Sprite):
     keys_ship_collect = [pg.K_b]
     keys_inspect = [pg.K_o]
     keys_end_turn = [pg.K_j]
+    keys_port = [pg.K_p, pg.K_1, pg.K_2, pg.K_3, pg.K_0]
 
-    keys_all = keys_ship_move + keys_end_turn + keys_ship_collect + keys_inspect
+    keys_all = keys_ship_move + keys_end_turn + keys_ship_collect + keys_inspect + keys_port
 
     def __init__(self, game, player, row, col, rank):
         self.game = game
@@ -34,11 +37,11 @@ class Ship(pg.sprite.Sprite):
             self.image = self.game.image_manager.frigate
         self.groups = self.game.sprites_unit, self.game.sprites_anim
 
-        #pg.sprite.Sprite.__init__(self, self.groups)
+        # pg.sprite.Sprite.__init__(self, self.groups)
         super().__init__(self.groups)
 
-
         self.aura = Aura(self)
+        #self.explosion = Explosion(self.game, self)
         self.rect = self.image.get_rect()
 
         # tile coordinates:
@@ -62,7 +65,11 @@ class Ship(pg.sprite.Sprite):
         self.load = 0
         self.load_turn = 0
 
-        self.hp = 100
+        self.show_port = False
+        self.port = self.game.image_manager.port
+        self.rectp = self.port.get_rect()
+        self.rectp.center = (504, 576)
+
         self.attack = values.get(self.rank) * 10
         self.destroyed = False
 
@@ -70,23 +77,28 @@ class Ship(pg.sprite.Sprite):
         self.is_done = True
         self.is_current = False
 
-
     def handle_keys(self, event):
         if event.key in Ship.keys_ship_move:
             self.analyze_move(event)
 
         if event.key in Ship.keys_ship_collect:
-            self.handle_collect(event)
+            self.handle_collect()
 
         if event.key in Ship.keys_inspect:
             print('\nPlayer: ' + self.player.name)
             self.print_full_info()
             self.player.castle.print_full_info()
 
+        # End of the turn confirmation
         if event.key == pg.K_j:
             self.is_done = True
             self.is_current = False
             self.moves_left = 0
+
+        # Show me my port
+        if event.key == pg.K_p:
+            self.show_my_port()
+
 
     def draw(self):
         if self.is_current:
@@ -322,15 +334,22 @@ class Ship(pg.sprite.Sprite):
 
         # here the ship touches own castle
         if self.r == self.player.castle.r and self.c == self.player.castle.c:
+            if self.rank == 'Sloop':
+                self.crew = 30
+            elif self.rank == 'Brigantine':
+                self.crew = 40
+            else:
+                self.crew = 50
+
             self.player.castle.gold += self.load
             self.load = 0
             print('Castle has now ', self.player.castle.gold, ' gold')
             if self.player.castle.gold == GOLD_TO_WIN:
                 print('Player ', self.player, ' has won the game!')
                 # Here should be transfer to Game Over function.
+            self.show_my_port()
 
-
-    def handle_collect(self, event):
+    def handle_collect(self):
         # check if enough moves are left:
         if self.moves_left <= 0:
             print('\n' + self.player.name + ': ship is out of moves.')
@@ -358,8 +377,9 @@ class Ship(pg.sprite.Sprite):
                     self.load += 1
                     print('You got 1 gold!')
                 if luck == 4:
-                    self.load -= 1
-                    print('You lost 1 gold')
+                    if self.load > 0:
+                        self.load -= 1
+                        print('You lost 1 gold')
                 if luck == 5:
                     self.attack += 10
                     print('Your attack increased by 10 for one strike!')
@@ -379,7 +399,15 @@ class Ship(pg.sprite.Sprite):
     def make_destroyed(self):
         self.moves_left = 0
         self.moves_per_turn = 0
+        #self.explosion = Explosion(self.game, self)
+        #self.game.sprites_anim.add(self.explosion)
+
         self.image = self.game.image_manager.ship_wreck
+        #for i in self.game.image_manager.exp_list:
+        #    self.image = i
+        #    self.game.screen.blit(self.image, self.game.camera.apply(self))
+        #    pg.time.wait(500)
+
         self.destroyed = True
         self.is_done = True
         self.is_current = False
@@ -397,3 +425,57 @@ class Ship(pg.sprite.Sprite):
                 print('  ' + item.name)
         else:
             print('None')
+
+    def show_my_port(self):
+        # # TODO: This needs to be re-worked to be controlled via buttons.
+        self.game.screen.blit(self.port, self.rectp)
+        gst = 'Available gold stock: ' + str(self.player.castle.gold)
+        self.draw_text("You are in your port", 64, WIDTH / 2, 500)
+        self.draw_text(gst, 22, WIDTH / 2, 600)
+        self.draw_text("To buy new ship hit: 1 - sloop, 2 - brigantine, 3 - frigate", 22, WIDTH / 2, 650)
+        self.draw_text("Press 0 key to leave the port", 22, WIDTH / 2, 700)
+        pg.display.flip()
+        waiting = True
+        while waiting:
+            self.game.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_1:
+                        if self.player.castle.gold > 0:
+                            self.player.ships.append(Ship(self.game, self.player, self.player.castle.r, self.player.castle.c, 'Sloop'))
+                            self.player.castle.gold -= 1
+                            self.show_port = False
+                            waiting = False
+                        else:
+                            self.draw_text("You do not have enough gold in the castle", 22, WIDTH / 2, 730)
+                            pg.display.flip()
+                    if event.key == pg.K_2:
+                        if self.player.castle.gold >= 2:
+                            self.player.ships.append(
+                                Ship(self.game, self.player, self.player.castle.r, self.player.castle.c, 'Brigantine'))
+                            self.player.castle.gold -= 2
+                            self.show_port = False
+                            waiting = False
+                        else:
+                            self.draw_text("You do not have enough gold in the castle", 22, WIDTH / 2, 730)
+                            pg.display.flip()
+                    if event.key == pg.K_3:
+                        if self.player.castle.gold >= 3:
+                            self.player.ships.append(
+                                Ship(self.game, self.player, self.player.castle.r, self.player.castle.c, 'Frigate'))
+                            self.player.castle.gold -= 3
+                            self.show_port = False
+                            waiting = False
+                        else:
+                            self.draw_text("You do not have enough gold in the castle", 22, WIDTH / 2, 730)
+                            pg.display.flip()
+                    elif event.key == pg.K_0:
+                        self.show_port = False
+                        waiting = False
+
+    def draw_text(self, text, size, x, y):
+        font = pg.font.Font(pg.font.match_font('arial'), size)
+        text_surface = font.render(text, True, BLACK)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (x, y)
+        self.game.screen.blit(text_surface, text_rect)
