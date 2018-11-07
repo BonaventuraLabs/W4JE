@@ -16,6 +16,7 @@ class PlayerTurnManager:
                                    Player(self.game, 'Alex', RED, 25, 4),
                                    Player(self.game, 'Danila', GREEN, 25, 45),
                                    Pirate(self.game, 'Long John', BLACK, 25, 25)])
+
         self.current_player = None
         self.current_ship = None
         self.start_turn(self.player_deque[0], self.player_deque[0].ships[0])
@@ -34,11 +35,10 @@ class PlayerTurnManager:
         if not self.current_ship.destroyed:
             self.game.camera.update(self.current_ship.rect.x, self.current_ship.rect.y)
 
-
     def on_end_turn(self):
         self.current_player.is_current = False
 
-        # Generate next turn. It is actually pushing next player turn, not a bew round of user turns.
+        # Generate next turn. It is actually pushing next player turn, not a new round of players turns.
         PlayerTurnManager.global_turn_count += 1
 
         # go to next player; rotate player deck once

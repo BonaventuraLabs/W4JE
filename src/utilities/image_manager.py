@@ -33,6 +33,9 @@ class ImageManager:
         frigate = ImageManager.load(FRIGATE)
         self.frigate = pg.transform.scale(frigate, (TILEWIDTH, TILEHEIGHT))
 
+        port = ImageManager.load(PORT)
+        self.port = pg.transform.scale(port, (600, 500))
+
         wind_arrow = ImageManager.load(WIND_ARROW)
         self.wind_arrow = pg.transform.scale(wind_arrow, (30, 100))
 
@@ -57,9 +60,20 @@ class ImageManager:
         pirate_ship = ImageManager.load(PIRATE)
         self.pirate_ship = pg.transform.scale(pirate_ship, (TILEWIDTH, TILEHEIGHT))
 
+        self.exp_list = ImageManager.load_explosion_list()
         self.cloud_list = ImageManager.load_cloud_list()
         self.fish_list = ImageManager.load_fish_list()
         self.animals_list = ImageManager.load_animals_list()
+
+    @staticmethod
+    def load_explosion_list():
+        img_list = []
+        for i in range(0, 9):
+            img_name = EXPLOSION_1_9[0] + str(i) + EXPLOSION_1_9[1]
+            img = ImageManager.load(img_name)
+            img = pg.transform.scale(img, (TILEWIDTH, TILEWIDTH))
+            img_list.append(img)
+        return img_list
 
     @staticmethod
     def load(name):

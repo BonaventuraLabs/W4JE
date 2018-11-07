@@ -51,7 +51,9 @@ SHIP_WRECK = 'image_ship_wreck_1.png'
 SEAGULL = 'image_seagull_1.png'
 CASTLE = 'image_castle_1.png'
 VILLAGE = 'image_village_1.png'
+PORT = 'port.png'
 
+EXPLOSION_1_9 = ['exp_', '.png']
 CLOUDS_1_6 = ['image_cloud_', '.png']
 FISH_1_2 = ['image_fish_', '.png']
 ANIMALS_1_3 = ['image_animal_', '.png']
