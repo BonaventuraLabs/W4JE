@@ -21,6 +21,15 @@ class ImageManager:
         land_base.blit(mountain, (0, 0))
         self.mountain = pg.transform.scale(land_base, (TILEWIDTH, TILEHEIGHT))
 
+        sloophud = ImageManager.load(SLOOPHUD)
+        self.sloophud = pg.transform.scale(sloophud, (180, 151))
+
+        brigantinehud = ImageManager.load(BRIGANTINEHUD)
+        self.brigantinehud = pg.transform.scale(brigantinehud, (180, 151))
+
+        frigatehud = ImageManager.load(FRIGATEHUD)
+        self.frigatehud = pg.transform.scale(frigatehud, (180, 151))
+
         ship = ImageManager.load(SHIP)
         self.ship = pg.transform.scale(ship, (TILEWIDTH, TILEHEIGHT))
 
@@ -43,7 +52,7 @@ class ImageManager:
         self.hud_compass = pg.transform.scale(compass, (120, 120))
 
         scroll = ImageManager.load(HUD_SCROLL)
-        self.hud_scroll = pg.transform.scale(scroll, (200, HEIGHT))
+        self.hud_scroll = pg.transform.scale(scroll, (220, int(HEIGHT/8*7)))
 
         seagull = ImageManager.load(SEAGULL)
         self.seagull = pg.transform.scale(seagull, (40, 20))
@@ -60,20 +69,32 @@ class ImageManager:
         pirate_ship = ImageManager.load(PIRATE)
         self.pirate_ship = pg.transform.scale(pirate_ship, (TILEWIDTH, TILEHEIGHT))
 
-        self.exp_list = ImageManager.load_explosion_list()
         self.cloud_list = ImageManager.load_cloud_list()
         self.fish_list = ImageManager.load_fish_list()
         self.animals_list = ImageManager.load_animals_list()
 
-    @staticmethod
-    def load_explosion_list():
-        img_list = []
-        for i in range(0, 9):
-            img_name = EXPLOSION_1_9[0] + str(i) + EXPLOSION_1_9[1]
-            img = ImageManager.load(img_name)
-            img = pg.transform.scale(img, (TILEWIDTH, TILEWIDTH))
-            img_list.append(img)
-        return img_list
+        #self.exp_list = ImageManager.load_explosion_list()
+        self.exp_list = {'Sloop': [], 'Brigantine': [], 'Frigate': []}
+        for i in range(9):
+            filename = 'exp_{}.png'.format(i)
+            img = pg.image.load(os.path.join(FOLDER_RESOURCES, filename)).convert_alpha()
+            img.set_colorkey(BLACK)
+            img_sl = pg.transform.scale(img, (TILEWIDTH, TILEHEIGHT))
+            self.exp_list['Sloop'].append(img_sl)
+            img_br = pg.transform.scale(img, (TILEWIDTH, TILEHEIGHT))
+            self.exp_list['Brigantine'].append(img_br)
+            img_br = pg.transform.scale(img, (TILEWIDTH, TILEHEIGHT))
+            self.exp_list['Frigate'].append(img_br)
+
+    #@staticmethod
+    #def load_explosion_list():
+    #    img_list = []
+    #    for i in range(0, 9):
+    #        img_name = EXPLOSION_1_9[0] + str(i) + EXPLOSION_1_9[1]
+    #        img = ImageManager.load(img_name)
+    #        img = pg.transform.scale(img, (TILEWIDTH, TILEWIDTH))
+    #        img_list.append(img)
+    #    return img_list
 
     @staticmethod
     def load(name):

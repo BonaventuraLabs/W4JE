@@ -82,7 +82,7 @@ class PirateShip(pg.sprite.Sprite):
 
         self.moving_anim_on = False
 
-        self.hp = 50
+        self.load = 0
         self.attack = 10
         self.defense = 10
         self.destroyed = False

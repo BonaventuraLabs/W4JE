@@ -20,7 +20,7 @@ class Minimap(pg.sprite.Sprite):
 
         self.image = pg.transform.scale(image, (target_width, target_height))
         self.rect = self.image.get_rect()
-        self.rect.center = (100, 460)
+        self.rect.center = (110, 800)
 
     def draw(self):
         self.game.screen.blit(self.image, self.rect)

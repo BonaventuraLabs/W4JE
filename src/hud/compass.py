@@ -1,5 +1,6 @@
 import pygame as pg
 from src.utilities.settings import *
+from src.map.text import Text
 
 
 class Compass(pg.sprite.Sprite):
@@ -12,7 +13,7 @@ class Compass(pg.sprite.Sprite):
         # self.image.fill((250, 250, 180))
         self.image = self.game.image_manager.hud_compass
         self.rect = self.image.get_rect()
-        self.rect.center = (100, 200)
+        self.rect.center = (110, 230)
 
     def draw(self):
         self.game.screen.blit(self.image, self.rect)
@@ -25,7 +26,7 @@ class WindArrow(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = self.game.image_manager.wind_arrow
         self.rect = self.image.get_rect()
-        self.fixed_position = (100, 200)
+        self.fixed_position = (110, 230)
         self.rect.center = self.fixed_position
         self.update()
 
@@ -38,11 +39,9 @@ class WindArrow(pg.sprite.Sprite):
         self.rect.center = self.fixed_position
 
     def show_text(self):
+        txt = Text(self.game)
         text = 'Wind strength: ' + str(self.game.atmosphere.wind.current_strength)
-        label = self.game.font.render(text, True, BLACK)
-        label_rect = label.get_rect()
-        label_rect.topleft = self.game.hud.compass.rect.topleft
-        self.game.screen.blit(label, label_rect)
+        txt.draw_text(text, 20, 110, 130)
 
     def draw(self):
         self.game.screen.blit(self.image, self.rect)

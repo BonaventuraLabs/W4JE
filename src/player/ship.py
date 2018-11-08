@@ -3,6 +3,7 @@ from src.utilities.settings import *
 from src.player.explosion import Explosion
 from src.player.battle import Battle
 from src.player.aura import Aura
+from src.map.text import Text
 import pygame as pg
 import random
 
@@ -41,7 +42,6 @@ class Ship(pg.sprite.Sprite):
         super().__init__(self.groups)
 
         self.aura = Aura(self)
-        #self.explosion = Explosion(self.game, self)
         self.rect = self.image.get_rect()
 
         # tile coordinates:
@@ -117,7 +117,7 @@ class Ship(pg.sprite.Sprite):
         label = self.game.font.render(text, True, WHITE)
         label_rect = label.get_rect()
         label_rect.center = self.rect.center
-        label_rect.bottom = self.rect.bottom
+        label_rect.bottom = self.rect.bottom + 20
         return label, label_rect
 
     def update(self, *args):
@@ -340,7 +340,7 @@ class Ship(pg.sprite.Sprite):
                 self.crew = 40
             else:
                 self.crew = 50
-
+            self.attack = values.get(self.rank) * 10
             self.player.castle.gold += self.load
             self.load = 0
             print('Castle has now ', self.player.castle.gold, ' gold')
@@ -387,11 +387,11 @@ class Ship(pg.sprite.Sprite):
                     self.attack -= 10
                     print('Your attack decreased by 10 for one strike.')
                 if luck == 7:
-                    self.moves_left += 10
-                    print('Your sailing path increased by 10 for 1 turn!')
+                    self.moves_left += 3
+                    print('Your sailing path increased by 3 for 1 turn!')
                 if luck == 8:
-                    self.moves_left -= 10
-                    print('Your sailing path decreased by 10 for 1 turn.')
+                    self.moves_left -= 3
+                    print('Your sailing path decreased by 3 for 1 turn.')
 
     def on_click(self):
         print('Click : ' + self.player.name + ' ship')
@@ -399,10 +399,11 @@ class Ship(pg.sprite.Sprite):
     def make_destroyed(self):
         self.moves_left = 0
         self.moves_per_turn = 0
-        #self.explosion = Explosion(self.game, self)
-        #self.game.sprites_anim.add(self.explosion)
+        #self explosion = Explosion(self.game, self.xy, self.rank)
+        self.game.sprites_anim.add(Explosion(self.game, self.xy, self.rank))
 
         self.image = self.game.image_manager.ship_wreck
+
         #for i in self.game.image_manager.exp_list:
         #    self.image = i
         #    self.game.screen.blit(self.image, self.game.camera.apply(self))
@@ -428,12 +429,13 @@ class Ship(pg.sprite.Sprite):
 
     def show_my_port(self):
         # # TODO: This needs to be re-worked to be controlled via buttons.
+        text = Text(self.game)
         self.game.screen.blit(self.port, self.rectp)
         gst = 'Available gold stock: ' + str(self.player.castle.gold)
-        self.draw_text("You are in your port", 64, WIDTH / 2, 500)
-        self.draw_text(gst, 22, WIDTH / 2, 600)
-        self.draw_text("To buy new ship hit: 1 - sloop, 2 - brigantine, 3 - frigate", 22, WIDTH / 2, 650)
-        self.draw_text("Press 0 key to leave the port", 22, WIDTH / 2, 700)
+        text.draw_text("You are in your port", 64, WIDTH / 2, 500)
+        text.draw_text(gst, 22, WIDTH / 2, 600)
+        text.draw_text("To buy new ship hit: 1 - sloop, 2 - brigantine, 3 - frigate", 22, WIDTH / 2, 650)
+        text.draw_text("Press 0 key to leave the port", 22, WIDTH / 2, 700)
         pg.display.flip()
         waiting = True
         while waiting:
@@ -447,7 +449,7 @@ class Ship(pg.sprite.Sprite):
                             self.show_port = False
                             waiting = False
                         else:
-                            self.draw_text("You do not have enough gold in the castle", 22, WIDTH / 2, 730)
+                            text.draw_text("You do not have enough gold in the castle", 22, WIDTH / 2, 730)
                             pg.display.flip()
                     if event.key == pg.K_2:
                         if self.player.castle.gold >= 2:
@@ -457,7 +459,7 @@ class Ship(pg.sprite.Sprite):
                             self.show_port = False
                             waiting = False
                         else:
-                            self.draw_text("You do not have enough gold in the castle", 22, WIDTH / 2, 730)
+                            text.draw_text("You do not have enough gold in the castle", 22, WIDTH / 2, 730)
                             pg.display.flip()
                     if event.key == pg.K_3:
                         if self.player.castle.gold >= 3:
@@ -467,15 +469,15 @@ class Ship(pg.sprite.Sprite):
                             self.show_port = False
                             waiting = False
                         else:
-                            self.draw_text("You do not have enough gold in the castle", 22, WIDTH / 2, 730)
+                            text.draw_text("You do not have enough gold in the castle", 22, WIDTH / 2, 730)
                             pg.display.flip()
                     elif event.key == pg.K_0:
                         self.show_port = False
                         waiting = False
 
-    def draw_text(self, text, size, x, y):
-        font = pg.font.Font(pg.font.match_font('arial'), size)
-        text_surface = font.render(text, True, BLACK)
-        text_rect = text_surface.get_rect()
-        text_rect.midtop = (x, y)
-        self.game.screen.blit(text_surface, text_rect)
+    #def draw_text(self, text, size, x, y):
+    #    font = pg.font.Font(pg.font.match_font('arial'), size)
+    #    text_surface = font.render(text, True, BLACK)
+    #    text_rect = text_surface.get_rect()
+    #    text_rect.midtop = (x, y)
+    #    self.game.screen.blit(text_surface, text_rect)
