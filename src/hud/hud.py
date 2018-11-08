@@ -4,7 +4,7 @@ from src.hud.scroll import Scroll
 from src.hud.minimap import Minimap
 from src.hud.button_end_turn import ButtonEndTurn
 from src.hud.compass import Compass, WindArrow
-from src.player.ship_info import ShipInfo
+from src.hud.ship_info import ShipInfo
 
 class Hud:
     def __init__(self, game):

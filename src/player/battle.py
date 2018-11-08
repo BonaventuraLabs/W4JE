@@ -25,7 +25,6 @@ class Battle:
         if self.d_ship.crew <= 0:
             self.d_ship.make_destroyed()
 
-
     def start(self):
         print(self.a_ship)
         print('attacks')

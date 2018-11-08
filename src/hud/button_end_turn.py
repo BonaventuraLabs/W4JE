@@ -11,7 +11,7 @@ class ButtonEndTurn(pg.sprite.Sprite):
         self.image = pg.Surface((120, 40))
         self.image.fill((150, 50, 50))
         self.rect = self.image.get_rect()
-        self.rect.center = (100, 560)
+        self.rect.center = (110, 940)
         self.id = 'end_turn_button'
 
     def draw(self):
