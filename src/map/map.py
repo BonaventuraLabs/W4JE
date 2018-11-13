@@ -2,6 +2,7 @@ from src.map.map_generator import MapGenerator
 from src.utilities.settings import *
 import numpy as np
 import pygame as pg
+from src.map.tile_item import Fish
 
 
 class Map:
@@ -20,6 +21,7 @@ class Map:
         #self.tiles_dict = MapGenerator.generate_circle_map(game, self.sprites_map, MAP_TILE_H, MAP_TILE_W)
         # map from txt
         self.tiles_dict = MapGenerator.generate_from_txt(game, self.sprites_map)
+        self.sea_tiles = []
 
         # randomly generated map:
         # self.tiles_dict = MapGenerator.generate_from_numpy(game, self.sprites_map, MAP_TILE_H, MAP_TILE_W)
@@ -28,6 +30,8 @@ class Map:
         for k, tile in self.tiles_dict.items():
             tile.center = Map.rc_to_xy(tile.r, tile.c)
             tile.rect.center = tile.center
+            if tile.type == 'sea':
+                self.sea_tiles.append(tile)
 
         # make list of spawn points (player may appear only on Coast tile.
         self.get_spawn_tiles()
@@ -38,6 +42,10 @@ class Map:
     def draw(self):
         for k, tile in self.tiles_dict.items():
             tile.draw()
+
+    def add_fish(self):
+        tile = np.random.choice(self.sea_tiles)
+        tile.items.append(Fish(self))
 
     def get_tile_by_rc(self, r, c):
         target_tile = None

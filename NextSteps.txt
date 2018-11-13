@@ -1,9 +1,11 @@
 DEVELOPMENT ROADMAP
 - Make port screen where player can buy new ships during his turn. DONE 06.11.2018.
-- Make sure winning mechanism works for both win variants: destroy all enemy ships, bring to own port 7 gold. Make Win! screen with option to start again.
 - Implement animation of sinking ship.DONE 07.11.2018
 - Improve hud info about current ship to show ship's image, current crew, load, shoot strength (canon icon). DONE 08.11.2018
-- Make sure the camera stops at the edge of the map and does not show black area around the map.
+- Make sure the camera stops at the edge of the map and does not show black area around the map. DONE 09.11.2018
+- When player picks up a fish a new one will randonly appear in the sea tiles. DONE 10.11.2018
+- Show ships status DONE 12.11.2018
+- Make sure winning mechanism works for both win variants: destroy all enemy ships, bring to own port 7 gold. Make Win! screen with option to start again.
 - Improve minimap to show current location of all ships.
 - Make separate images of ships depending on sail direction and battle. Also make animation of battle shots.
 - Implement AI depending on nation.
