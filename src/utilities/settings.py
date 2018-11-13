@@ -1,13 +1,19 @@
+
+import pygame as pg
 import os
 
 
 #SHEEP_SPEED = 10  # moves (1 tile) per turn
 TITLE = 'W4JE'
 
-WIDTH = 1008
-HEIGHT = 1152
+WIDTH = 1400
+HEIGHT = 800
 MAP_TILE_H = 50
 MAP_TILE_W = 50
+pg.init()
+COLOR_INACTIVE = 'lightskyblue3'
+COLOR_ACTIVE = 'dodgerblue2'
+FONT = pg.font.Font(None, 32)
 
 CAMERA_SPEED = 15 #pix
 HUD_HEIGHT = 80
@@ -39,6 +45,7 @@ TILE_LAND_IMAGE = 'tile_land_1.png'
 TILE_MOUNTAIN_IMAGE = 'tile_mountain_1.png'
 TILE_SAND_IMAGE = 'tile_sand_1.png'
 
+BOTTOM_SCROLL = 'hud_scroll_1.png'
 WIND_ARROW = 'wind_arrow_2.png'
 HUD_SCROLL = 'hud_scroll_2.png'
 HUD_COMPASS = 'hud_compass_3.png'
@@ -60,6 +67,9 @@ EXPLOSION_1_9 = ['exp_', '.png']
 CLOUDS_1_6 = ['image_cloud_', '.png']
 FISH_1_2 = ['image_fish_', '.png']
 ANIMALS_1_3 = ['image_animal_', '.png']
+
+BAR_LENGTH = 100
+BAR_HEIGHT = 10
 
 
 TILE_TYPE_DICT = {0: 'sea', 'sea': 0,

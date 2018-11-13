@@ -16,10 +16,10 @@ class Battle:
         print('random = ' + str(x))
         if x > 5:  # attacking ship lost
             self.a_ship.crew -= v2
-            print('attacker minus ' + str(v2))
+            self.a_ship.status = 'Witch out! You got minus ' + str(v2)
         else:
             self.d_ship.crew -= v1
-            print('defender minus ' + str(v1))
+            self.a_ship.status = 'Great shot! Defender minus ' + str(v1)
         if self.a_ship.crew <= 0:
             self.a_ship.make_destroyed()
         if self.d_ship.crew <= 0:

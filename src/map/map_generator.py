@@ -132,6 +132,14 @@ class MapGenerator:
             elif tile.type == 'sand':
                 color = [240, 240, 0]
                 rgb[tile.c, tile.r, :] = color
+
+        #for p in tile.game.player_turn_manager.player_deque:
+         #   for sh in p.ships:
+         #       if not sh.destroyed:
+         #           color = [255, 0, 0]
+         #           rgb[sh.c, sh.r, :] = color
+                    #if (sh.r, sh.c) == (target_r, target_c):
+                    #    target_unit = p.get_ship_by_xy(target_r, target_c)
         mini_map = pg.surfarray.make_surface(rgb)
         return mini_map
 

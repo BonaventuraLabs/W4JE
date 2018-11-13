@@ -18,8 +18,6 @@ class Pirate:
         #row, col = self.game.map.spawn_tiles_list.pop()
         row, col = [rw, cl]
 
-
-
         self.ships = []
         self.ships.append(PirateShip(game, self, row, col, 'Sloop'))
         #self.ship = PirateShip(game, self, row, col, 'Sloop')
@@ -47,14 +45,16 @@ class PirateShip(pg.sprite.Sprite):
         self.player = player
         self.rank = rank
         if self.rank == 'Sloop':
-            self.crew = 30
+            self.max_crew = 30
             self.moves_per_turn = 12
         elif self.rank == 'Brigantine':
-            self.crew = 40
+            self.max_crew = 40
             self.moves_per_turn = 10
         else:
-            self.crew = 50
+            self.max_crew = 50
             self.moves_per_turn = 8
+        self.crew = self.max_crew
+        self.status = ''
         self.groups = self.game.sprites_unit, self.game.sprites_anim
 
         super().__init__(self.groups)

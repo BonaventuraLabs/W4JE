@@ -20,6 +20,7 @@ class Aura(pg.sprite.Sprite):
         self.phase = self.phase_max
         self.phase_change = -self.phase_speed
 
+
     def generate_image(self):
         # square surface, 2*tile:
         w = 2 * TILEWIDTH
@@ -51,3 +52,4 @@ class Aura(pg.sprite.Sprite):
         self.image = pg.transform.scale(self.image_fixed, (new_w, new_h))
         self.rect = self.image.get_rect()
         self.rect.center = self.owner.xy
+

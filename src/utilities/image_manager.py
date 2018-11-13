@@ -52,7 +52,11 @@ class ImageManager:
         self.hud_compass = pg.transform.scale(compass, (120, 120))
 
         scroll = ImageManager.load(HUD_SCROLL)
-        self.hud_scroll = pg.transform.scale(scroll, (220, int(HEIGHT/8*7)))
+        #self.hud_scroll = pg.transform.scale(scroll, (220, int(HEIGHT/20*19)))
+        self.hud_scroll = pg.transform.scale(scroll, (220, HEIGHT))
+
+        bottom_scroll = ImageManager.load(BOTTOM_SCROLL)
+        self.bottom_scroll = pg.transform.scale(bottom_scroll, (800, 120))
 
         seagull = ImageManager.load(SEAGULL)
         self.seagull = pg.transform.scale(seagull, (40, 20))

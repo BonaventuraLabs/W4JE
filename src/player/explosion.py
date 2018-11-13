@@ -26,7 +26,6 @@ class Explosion(pg.sprite.Sprite):
                 center = self.rect.center
                 #pg.time.wait(500)
                 self.image = self.game.image_manager.exp_list[self.rank][self.frame]
-                print('drawing frames')
                 self.rect = self.image.get_rect()
                 self.rect.center = center
 

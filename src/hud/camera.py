@@ -34,6 +34,10 @@ class Camera:
         # same as old, but directly with x and y; this is more flexible than "target.rect.x"
         x_shifted = - x + int(WIDTH / 2)
         y_shifted = - y + int(HEIGHT / 2)
+        x_shifted = min(0, x_shifted)
+        x_shifted = max(-(self.width - WIDTH - TILEWIDTH), x_shifted)
+        y_shifted = min(0, y_shifted)
+        y_shifted = max(-(self.height - HEIGHT - TILEHEIGHT), y_shifted)
         self.rect = pg.Rect(x_shifted, y_shifted, self.width, self.height)
 
     def handle_keys(self, event):
@@ -57,13 +61,19 @@ class Camera:
 
 
     def move_left(self):
-        self.rect.x += self.speed
+        if self.rect.x + self.speed < 0:
+            self.rect.x += self.speed
 
     def move_right(self):
-        self.rect.x -= self.speed
+        if self.rect.x > -(self.width - WIDTH - TILEWIDTH):
+            self.rect.x -= self.speed
 
     def move_up(self):
-        self.rect.y += self.speed
+        if self.rect.y + self.speed < 0:
+            self.rect.y += self.speed
 
     def move_down(self):
-        self.rect.y -= self.speed
+        if self.rect.y > -(self.height - HEIGHT - TILEHEIGHT):
+            self.rect.y -= self.speed
+
+

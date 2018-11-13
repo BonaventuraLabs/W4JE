@@ -3,6 +3,7 @@ from collections import deque
 import pygame as pg
 from src.utilities.settings import *
 from src.hud.hud import Hud
+from src.hud.bottom_scroll import BottomHud
 from src.hud.camera import Camera
 from src.utilities.image_manager import ImageManager
 from src.map.map import Map
@@ -10,6 +11,7 @@ from src.map.atmosphere import Atmosphere
 from src.eventmanager.event_manager import EventManager
 from src.player.player import Player
 from src.player.player_turn_manager import PlayerTurnManager
+from src.game_flow.start_screen import InputBox
 
 # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # from .context import sample
@@ -37,6 +39,7 @@ class Game:
         self.map = Map(self)
         self.atmosphere = Atmosphere(self)
         self.hud = Hud(self)
+        self.bottom_hud = BottomHud(self)
         self.camera = Camera(self)
 
         self.player_turn_manager = PlayerTurnManager(self)
@@ -93,10 +96,31 @@ class Game:
                 sprite.draw()
         self.atmosphere.draw()
         self.hud.draw()
+        self.bottom_hud.draw()
         pg.display.flip()
 
     def show_start_screen(self):
-        pass
+        input_box1 = InputBox(100, 100, 140, 32, self.screen)
+        input_box2 = InputBox(100, 300, 140, 32, self.screen)
+        input_boxes = [input_box1, input_box2]
+        done = False
+
+        while not done:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    done = True
+                for box in input_boxes:
+                    box.handle_event(event)
+
+            for box in input_boxes:
+                box.update()
+
+            self.screen.fill((30, 30, 30))
+            for box in input_boxes:
+                box.draw(self.screen)
+
+            pg.display.flip()
+            self.clock.tick(30)
 
     def show_go_screen(self):
         pass

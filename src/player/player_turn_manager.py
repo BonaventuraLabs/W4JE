@@ -32,6 +32,8 @@ class PlayerTurnManager:
         self.current_ship.is_done = False
         self.current_ship.moves_left = self.current_ship.moves_per_turn
         self.current_ship.recalc_center()
+        if self.current_ship.status == 'This ship is out of moves.':
+            self.current_ship.status = 'Ships log'
         if not self.current_ship.destroyed:
             self.game.camera.update(self.current_ship.rect.x, self.current_ship.rect.y)
 
