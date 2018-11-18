@@ -12,10 +12,10 @@ class PlayerTurnManager:
 
     def __init__(self, game):
         self.game = game
-        self.player_deque = deque([Player(self.game, 'Dimas', YELLOW, 4, 25),
-                                   Player(self.game, 'Alex', RED, 25, 4),
-                                   Player(self.game, 'Danila', GREEN, 25, 45),
-                                   Pirate(self.game, 'Long John', BLACK, 25, 25)])
+        self.player_deque = deque([Player(self.game, game.pname1, YELLOW, 4, 25, 'English'),
+                                   Player(self.game, game.pname2, RED, 25, 4, 'Dutch'),
+                                   Player(self.game, game.pname3, GREEN, 25, 45, 'French'),
+                                   Pirate(self.game, game.pname4, BLACK, 25, 25, 'Spanish')])
 
         self.current_player = None
         self.current_ship = None
@@ -28,13 +28,11 @@ class PlayerTurnManager:
         self.current_player.is_current = True
         self.current_player.is_done = False
         self.current_ship = ship
-        self.current_ship.is_current = True
-        self.current_ship.is_done = False
-        self.current_ship.moves_left = self.current_ship.moves_per_turn
-        self.current_ship.recalc_center()
-        if self.current_ship.status == 'This ship is out of moves.':
-            self.current_ship.status = 'Ships log'
         if not self.current_ship.destroyed:
+            self.current_ship.is_current = True
+            self.current_ship.is_done = False
+            self.current_ship.moves_left = self.current_ship.moves_per_turn
+            self.current_ship.recalc_center()
             self.game.camera.update(self.current_ship.rect.x, self.current_ship.rect.y)
 
     def on_end_turn(self):
@@ -64,12 +62,12 @@ class PlayerTurnManager:
 
         # if the current ship is done check if it is players last ship and if yes pass turn to the next player
         if self.current_ship.is_done:
+            self.current_ship.status = ''
             self.current_ship.is_current = False
             ind = self.current_player.ships.index(self.current_ship)
             if ind == len(self.current_player.ships)-1:
                 self.current_player.is_done = True
                 # if player is done: end turn
-                print('PLAYER IS DONE')
                 self.on_end_turn()
                 return
 

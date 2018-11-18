@@ -1,4 +1,3 @@
-import pygame as pg
 import random
 
 
@@ -12,11 +11,15 @@ class Battle:
         v1 = self.a_ship.attack
         v2 = self.d_ship.attack
 
-        x = random.randint(1, 10)
+        x = random.randint(1, 20)
         print('random = ' + str(x))
-        if x > 5:  # attacking ship lost
-            self.a_ship.crew -= v2
-            self.a_ship.status = 'Witch out! You got minus ' + str(v2)
+        if self.a_ship.ships_nation == 'Dutch':
+            x -= 1
+            print('Dutch random ' + str(x))
+        if x > 10:  # attacking ship lost
+                self.a_ship.crew -= v2
+                self.a_ship.status = 'Watch out! You got minus ' + str(v2)
+                print('Attacker ' + self.a_ship.ships_nation + ' random ' + str(x))
         else:
             self.d_ship.crew -= v1
             self.a_ship.status = 'Great shot! Defender minus ' + str(v1)
@@ -26,8 +29,5 @@ class Battle:
             self.d_ship.make_destroyed()
 
     def start(self):
-        print(self.a_ship)
-        print('attacks')
-        print(self.d_ship)
         self.calculate_damage()
 

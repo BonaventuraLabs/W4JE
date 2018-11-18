@@ -26,7 +26,7 @@ class ShipInfo(pg.sprite.Sprite):
         fill = pct * BAR_LENGTH
         outline_rect = pg.Rect(55, self.upperloc + 80, BAR_LENGTH, BAR_HEIGHT)
         fill_rect = pg.Rect(55, self.upperloc + 80, fill, BAR_HEIGHT)
-        pg.draw.rect(self.game.screen, GREEN, fill_rect)
+        pg.draw.rect(self.game.screen, self.game.player_turn_manager.current_player.color, fill_rect)
         pg.draw.rect(self.game.screen, WHITE, outline_rect, 2)
 
         self.game.screen.blit(image, rect)

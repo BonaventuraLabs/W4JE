@@ -8,16 +8,18 @@ class InputBox:
         self.screen = screen
         self.rect = pg.Rect(x, y, w, h)
         self.color = pg.Color(COLOR_INACTIVE)
-        self.text = ''
-        self.txt_surface = FONT.render(self.text, True, self.color)
+        self.txt = 'Computer'
+        self.txt_surface = FONT.render(self.txt, True, self.color)
         self.active = False
 
     def handle_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             # If the user clicked on the input_box rect.
+
             if self.rect.collidepoint(event.pos):
                 # Toggle the active variable.
                 self.active = not self.active
+                self.txt = ''
             else:
                 self.active = False
             # Change the current color of the input box.
@@ -25,14 +27,14 @@ class InputBox:
         if event.type == pg.KEYDOWN:
             if self.active:
                 if event.key == pg.K_RETURN:
-                    print(self.text)
-                    self.text = ''
+                    print(self.txt)
+                    self.txt = ''
                 elif event.key == pg.K_BACKSPACE:
-                    self.text = self.text[:-1]
+                    self.txt = self.txt[:-1]
                 else:
-                    self.text += event.unicode
+                    self.txt += event.unicode
                 # Re-render the text.
-                self.txt_surface = FONT.render(self.text, True, self.color)
+                self.txt_surface = FONT.render(self.txt, True, self.color)
 
     def update(self):
         # Resize the box if the text is too long.

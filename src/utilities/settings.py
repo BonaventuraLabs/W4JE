@@ -11,8 +11,6 @@ HEIGHT = 800
 MAP_TILE_H = 50
 MAP_TILE_W = 50
 pg.init()
-COLOR_INACTIVE = 'lightskyblue3'
-COLOR_ACTIVE = 'dodgerblue2'
 FONT = pg.font.Font(None, 32)
 
 CAMERA_SPEED = 15 #pix
@@ -26,6 +24,8 @@ BLUE = (0, 0, 255, 160)
 LIGHTGREY = (100, 100, 100)
 BGCOLOR = LIGHTGREY
 YELLOW = (255, 255, 0, 160)
+COLOR_INACTIVE = 'lightskyblue3'
+COLOR_ACTIVE = 'dodgerblue2'
 
 # original stile size: (w=28, h = 32)
 TILEHEIGHT = 64 #32
@@ -33,7 +33,7 @@ TILEWIDTH = 56 #28
 TILE_HEX_R = TILEHEIGHT/2 # for vertical hexagons
 TILECOLORKEY = (0, 0, 0) # alpha channel?...
 
-FPS = 60
+FPS = 120
 
 SEAGULL_COUNT = 50
 CLOUD_COUNT = 50
@@ -58,6 +58,7 @@ BRIGANTINEHUD = 'Brigantine.png'
 FRIGATEHUD = 'Frigate.png'
 PIRATE = 'image_pirate_1.png'
 SHIP_WRECK = 'image_ship_wreck_1.png'
+SHIP_CAPTURED = 'image_capt.png'
 SEAGULL = 'image_seagull_1.png'
 CASTLE = 'image_castle_1.png'
 VILLAGE = 'image_village_1.png'

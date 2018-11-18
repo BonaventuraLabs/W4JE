@@ -1,13 +1,16 @@
 DEVELOPMENT ROADMAP
 - Make port screen where player can buy new ships during his turn. DONE 06.11.2018.
 - Implement animation of sinking ship.DONE 07.11.2018
-- Improve hud info about current ship to show ship's image, current crew, load, shoot strength (canon icon). DONE 08.11.2018
+- Improve hud info about current ship to show ship's image, current crew, load, shoot strength. DONE 08.11.2018
 - Make sure the camera stops at the edge of the map and does not show black area around the map. DONE 09.11.2018
 - When player picks up a fish a new one will randonly appear in the sea tiles. DONE 10.11.2018
-- Show ships status DONE 12.11.2018
+- Show ships status on the left side bar. DONE 12.11.2018
+- Implement start screen with options to select nation and number of real players, the rest will be AI.DONE 15.11.2018
+- Make perks depending on nation.This was not easy because enemy ship capture was introduced. DONE 17.11.2018
+- Improve battle machanics to show damage bar for each ship. DONE 18.11.2018
 - Make sure winning mechanism works for both win variants: destroy all enemy ships, bring to own port 7 gold. Make Win! screen with option to start again.
-- Improve minimap to show current location of all ships.
+- Improve start screen adding selection of win gold amount. Default 7, but should be changable up to 10.
+- Improve minimap to show current location of all ships, villages and ports with players colors.
 - Make separate images of ships depending on sail direction and battle. Also make animation of battle shots.
 - Implement AI depending on nation.
-- Implement start screen with options to select nation and number of real players, the rest will be AI.
 - Have professional graphics maker to draw: start screen, win screen, port screen, tiles, ships (small and big) including rotating images for each type of ships, sinking and shooting animations.
