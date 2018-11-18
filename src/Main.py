@@ -1,6 +1,7 @@
 import sys
 from collections import deque
 import pygame as pg
+from src.map.text import Text
 from src.utilities.settings import *
 from src.hud.hud import Hud
 from src.hud.bottom_scroll import BottomHud
@@ -42,13 +43,12 @@ class Game:
         self.bottom_hud = BottomHud(self)
         self.camera = Camera(self)
 
-        self.player_turn_manager = PlayerTurnManager(self)
-
         self.mouse_drag = False
-        self.mouse_drag_xy = self.player_turn_manager.current_player.castle.xy
+
         self.playing = True
 
         self.debug_mode = False
+
 
     def run(self):
         while self.playing:
@@ -100,9 +100,13 @@ class Game:
         pg.display.flip()
 
     def show_start_screen(self):
-        input_box1 = InputBox(100, 100, 140, 32, self.screen)
-        input_box2 = InputBox(100, 300, 140, 32, self.screen)
-        input_boxes = [input_box1, input_box2]
+        text = Text(self)
+        # self.game.screen.blit(self.port, self.rectp)
+        input_box1 = InputBox(50, 150, 140, 32, self.screen)
+        input_box2 = InputBox(50, 230, 140, 32, self.screen)
+        input_box3 = InputBox(50, 310, 140, 32, self.screen)
+        input_box4 = InputBox(50, 390, 140, 32, self.screen)
+        input_boxes = [input_box1, input_box2, input_box3, input_box4]
         done = False
 
         while not done:
@@ -115,12 +119,28 @@ class Game:
             for box in input_boxes:
                 box.update()
 
-            self.screen.fill((30, 30, 30))
+            self.screen.fill((187, 200, 200))
+            text.draw_text("Enter player name by the nation", 40, 575, 55)
+            text.draw_text("English: +1 move", 24, 370, 150)
+            text.draw_text("Dutch: when attacking extra battle win chance", 24, 550, 230)
+            text.draw_text("French: extra luck", 24, 385, 310)
+            text.draw_text("Spanish: extra chance to capture enemy ship", 24, 530, 390)
             for box in input_boxes:
                 box.draw(self.screen)
 
             pg.display.flip()
-            self.clock.tick(30)
+            #self.clock.tick(30)
+
+        self.pname1 = input_box1.txt
+        print(self.pname1)
+        self.pname2 = input_box2.txt
+        print(self.pname2)
+        self.pname3 = input_box3.txt
+        print(self.pname3)
+        self.pname4 = input_box4.txt
+        print(self.pname4)
+        self.player_turn_manager = PlayerTurnManager(self)
+        self.mouse_drag_xy = self.player_turn_manager.current_player.castle.xy
 
     def show_go_screen(self):
         pass
@@ -131,7 +151,9 @@ class Game:
 
 
 g = Game()
-#g.show_start_screen()
+g.show_start_screen()
+
+
 
 while True:
     g.run()

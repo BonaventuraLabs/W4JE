@@ -70,6 +70,9 @@ class ImageManager:
         ship_wreck = ImageManager.load(SHIP_WRECK)
         self.ship_wreck = pg.transform.scale(ship_wreck, (TILEWIDTH, TILEHEIGHT))
 
+        ship_capt = ImageManager.load(SHIP_CAPTURED)
+        self.ship_capt = pg.transform.scale(ship_capt, (4, 3))
+
         pirate_ship = ImageManager.load(PIRATE)
         self.pirate_ship = pg.transform.scale(pirate_ship, (TILEWIDTH, TILEHEIGHT))
 

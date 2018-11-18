@@ -28,7 +28,7 @@ class Castle(pg.sprite.Sprite):
         label = self.game.font.render(text, True, WHITE)
         label_rect = label.get_rect()
         label_rect.center = self.rect.center
-        label_rect.bottom = self.rect.bottom
+        label_rect.bottom = self.rect.bottom + 2
         return label, label_rect
 
     def on_click(self):

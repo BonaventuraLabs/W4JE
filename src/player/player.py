@@ -11,10 +11,11 @@ class Player:
    # original # keys_ship_move = [pg.K_KP1, pg.K_KP3, pg.K_KP4, pg.K_KP6, pg.K_KP7, pg.K_KP9]
 
 
-    def __init__(self, game, name, color, rw, cl):
+    def __init__(self, game, name, color, rw, cl, nation):
         self.game = game
         self.color = color
         self.name = name
+        self.nation = nation
         # UNDELETE if random spawn is needed
         # position at generation:
         # shuffle available tiles:

@@ -7,11 +7,11 @@ from src.player.battle import Battle
 
 class Pirate:
 
-    def __init__(self, game, name, color, rw, cl):
+    def __init__(self, game, name, color, rw, cl, nation):
         self.game = game
         self.color = color
         self.name = name
-
+        self.nation = nation
         # position at generation:
         # shuffle available tiles: TEMPORARY DISABLED
         #np.random.shuffle(self.game.map.spawn_tiles_list)
@@ -43,6 +43,7 @@ class PirateShip(pg.sprite.Sprite):
     def __init__(self, game, player, row, col, rank):
         self.game = game
         self.player = player
+        self.ships_nation = player.nation
         self.rank = rank
         if self.rank == 'Sloop':
             self.max_crew = 30
@@ -53,6 +54,8 @@ class PirateShip(pg.sprite.Sprite):
         else:
             self.max_crew = 50
             self.moves_per_turn = 8
+        if self.ships_nation == 'English':
+            self.moves_per_turn += 1
         self.crew = self.max_crew
         self.status = ''
         self.groups = self.game.sprites_unit, self.game.sprites_anim
