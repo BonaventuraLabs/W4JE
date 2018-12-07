@@ -18,21 +18,26 @@ class Castle(pg.sprite.Sprite):
         self.rect.center = self.xy
         self.gold = 0
 
+
     def draw(self):
         self.game.screen.blit(self.image, self.game.camera.apply(self))
         label, label_rect = self.get_name_label()
         self.game.screen.blit(label, self.game.camera.apply(label_rect))
 
     def get_name_label(self):
-        text = self.player.name
+        if self.player.name == 'Computer':
+            text = self.player.nation
+        else:
+            text = self.player.name
+
         label = self.game.font.render(text, True, WHITE)
         label_rect = label.get_rect()
         label_rect.center = self.rect.center
-        label_rect.bottom = self.rect.bottom
+        label_rect.bottom = self.rect.bottom + 2
         return label, label_rect
 
     def on_click(self):
-        print('\nClick : ' + self.player.name + ' castle')
+        print('Click : ' + self.player.name + ' castle')
 
     def print_full_info(self):
         print('---=== CASTLE ===---')

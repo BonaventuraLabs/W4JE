@@ -1,6 +1,6 @@
 import pygame as pg
 import numpy as np
-from src.map.tile_item import Fish, Animal
+from src.map.tile_item import Fish, Landscape
 
 
 class Tile(pg.sprite.Sprite):
@@ -44,17 +44,25 @@ class Tile(pg.sprite.Sprite):
         if np.random.randint(0, chances[1], 1) < chances[0]:
             if self.type == 'sea':
                 self.items.append(Fish(self))
-            elif self.type in ['land', 'sand', 'mountain']:
-                self.items.append(Animal(self))
+            #elif self.type in ['land', 'sand', 'mountain']:
+            #    self.items.append(Landscape(self))
 
             # blit image of the item onto the tile image:
-            img = self.image_base.copy()
-            img.blit(self.items[-1].image, (0, 0))  # -1: show only the last entry.
-            self.image = img
+                img = self.image_base.copy()
+                img.blit(self.items[-1].image, (0, 0))  # -1: show only the last entry.
+                self.image = img
+
+        chances = (1, 5)  # 1 out of N
+        if np.random.randint(0, chances[1], 1) < chances[0]:
+            if self.type == 'land':
+                self.items.append(Landscape(self))
+            # blit image of the item onto the tile image:
+                img = self.image_base.copy()
+                img.blit(self.items[-1].image, (0, 0))  # -1: show only the last entry.
+                self.image = img
 
     def remove_one_item(self):
         if len(self.items) == 0:
-            print('\nNothing to collect.')
             return None
 
         item = self.items.pop()
@@ -64,7 +72,7 @@ class Tile(pg.sprite.Sprite):
             self.image = self.image_base
         else:
             img = self.image_base.copy()
-            img.blit(self.item[-1].image, (0, 0))  # -1: show only the last entry.
+            img.blit(self.items[-1].image, (0, 0))  # -1: show only the last entry.
             self.image = img
 
         return item

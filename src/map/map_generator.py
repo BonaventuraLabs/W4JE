@@ -133,6 +133,17 @@ class MapGenerator:
                 color = [240, 240, 0]
                 rgb[tile.c, tile.r, :] = color
 
+        #for i in game.map.tiles():
+        #    if i == 1:
+        #        color = [0, 255, 0]
+        #        rgb[i.c, i.r, :] = color
+        #    elif i == 3:
+        #        color = [120, 120, 120]
+        #        rgb[i.c, i.r, :] = color
+        #    elif i == 2:
+        #        color = [240, 240, 0]
+        #        rgb[i.c, i.r, :] = color
+
         #for p in tile.game.player_turn_manager.player_deque:
          #   for sh in p.ships:
          #       if not sh.destroyed:
@@ -158,5 +169,5 @@ class MapGenerator:
         for row, tiles in enumerate(data):
             for col, el in enumerate(tiles):
                 number_map[row, col] = int(el)
-
-        return MapGenerator.generate_tiles(game, sprites_group, number_map)
+        #print(number_map)
+        return MapGenerator.generate_tiles(game, sprites_group, number_map), number_map

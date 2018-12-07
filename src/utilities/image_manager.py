@@ -45,6 +45,9 @@ class ImageManager:
         port = ImageManager.load(PORT)
         self.port = pg.transform.scale(port, (600, 500))
 
+        starts = ImageManager.load(START)
+        self.starts = pg.transform.scale(starts, (1400, 800))
+
         wind_arrow = ImageManager.load(WIND_ARROW)
         self.wind_arrow = pg.transform.scale(wind_arrow, (30, 100))
 
@@ -70,12 +73,16 @@ class ImageManager:
         ship_wreck = ImageManager.load(SHIP_WRECK)
         self.ship_wreck = pg.transform.scale(ship_wreck, (TILEWIDTH, TILEHEIGHT))
 
+        ship_capt = ImageManager.load(SHIP_CAPTURED)
+        self.ship_capt = pg.transform.scale(ship_capt, (4, 3))
+
         pirate_ship = ImageManager.load(PIRATE)
         self.pirate_ship = pg.transform.scale(pirate_ship, (TILEWIDTH, TILEHEIGHT))
 
         self.cloud_list = ImageManager.load_cloud_list()
         self.fish_list = ImageManager.load_fish_list()
         self.animals_list = ImageManager.load_animals_list()
+        self.landscape_list = ImageManager.load_landscape_list()
 
         #self.exp_list = ImageManager.load_explosion_list()
         self.exp_list = {'Sloop': [], 'Brigantine': [], 'Frigate': []}
@@ -133,6 +140,17 @@ class ImageManager:
         img_list = []
         for i in range(1, 4):
             img_name = ANIMALS_1_3[0] + str(i) + ANIMALS_1_3[1]
+            img = ImageManager.load(img_name)
+            # resize?
+            img = pg.transform.scale(img, (TILEWIDTH, TILEWIDTH))
+            img_list.append(img)
+        return img_list
+
+    @staticmethod
+    def load_landscape_list():
+        img_list = []
+        for i in range(1, 4):
+            img_name = LANDSCAPE_1_3[0] + str(i) + LANDSCAPE_1_3[1]
             img = ImageManager.load(img_name)
             # resize?
             img = pg.transform.scale(img, (TILEWIDTH, TILEWIDTH))
