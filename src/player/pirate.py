@@ -1,9 +1,6 @@
-import pygame as pg
-from src.player.ship import Ship
 from src.utilities.settings import *
 import numpy as np
 from src.player.battle import Battle
-
 
 class Pirate:
 
@@ -46,13 +43,13 @@ class PirateShip(pg.sprite.Sprite):
         self.ships_nation = player.nation
         self.rank = rank
         if self.rank == 'Sloop':
-            self.max_crew = 30
+            self.max_crew = 40
             self.moves_per_turn = 12
         elif self.rank == 'Brigantine':
-            self.max_crew = 40
+            self.max_crew = 50
             self.moves_per_turn = 10
         else:
-            self.max_crew = 50
+            self.max_crew = 60
             self.moves_per_turn = 8
         if self.ships_nation == 'English':
             self.moves_per_turn += 1
@@ -65,6 +62,7 @@ class PirateShip(pg.sprite.Sprite):
 
         self.image = self.game.image_manager.pirate_ship
         self.rect = self.image.get_rect()
+        self.captured = False
 
         # tile coordinates:
         self.r = row
@@ -110,27 +108,59 @@ class PirateShip(pg.sprite.Sprite):
         self.rect.center = self.xy
 
     def draw(self):
-        if self.destroyed:
+        if not self.destroyed:
+            #if self.is_current:
+            #    self.game.screen.blit(self.aura.image, self.game.camera.apply(self.aura))
+            label, label_rect = self.get_name_label()
+            self.game.screen.blit(label, self.game.camera.apply(label_rect))
+            bar, bar_rect = self.get_bar()
+            self.game.screen.blit(bar, self.game.camera.apply(bar_rect))
+            self.game.screen.blit(self.image, self.game.camera.apply(self))
+        else:
             self.moves_left = 0
             self.moves_per_turn = 0
             self.is_done = True
             self.is_current = False
-        self.game.screen.blit(self.image, self.game.camera.apply(self))
-        label, label_rect = self.get_name_label()
-        self.game.screen.blit(label, self.game.camera.apply(label_rect))
+
+    def get_bar(self):
+        w = 2 * TILEWIDTH
+        bar = pg.Surface((w, w), pg.SRCALPHA, 32).convert_alpha()
+        pct = self.crew / self.max_crew
+        fill = pct * TILEWIDTH
+        outline_rect = pg.Rect(int(TILEWIDTH), int(TILEWIDTH), TILEWIDTH, 7)
+        fill_rect = pg.Rect(int(TILEWIDTH), int(TILEWIDTH), fill, 7)
+        pg.draw.rect(bar, self.player.color, fill_rect)
+        pg.draw.rect(bar, WHITE, outline_rect, 1)
+        bar_rect = bar.get_rect()
+        #bar_rect.x = self.xy[0] - 82
+        #bar_rect.y = self.xy[1] - 20
+        bar_rect.centerx = self.rect.centerx - 24
+        bar_rect.centery = self.rect.centery + 38
+        #bar_rect.bottom = self.rect.bottom + 60
+        return bar, bar_rect
+
+
+#    def draw(self):
+#        if self.destroyed:
+#            self.moves_left = 0
+#            self.moves_per_turn = 0
+#            self.is_done = True
+#            self.is_current = False
+#        self.game.screen.blit(self.image, self.game.camera.apply(self))
+#        label, label_rect = self.get_name_label()
+#        self.game.screen.blit(label, self.game.camera.apply(label_rect))
 
     def get_name_label(self):
-        text = self.player.name + '. Moves: ' + self.chosen_direction
+        text = self.player.name
         label = self.game.font.render(text, True, WHITE)
         label_rect = label.get_rect()
         label_rect.center = self.rect.center
-        label_rect.bottom = self.rect.bottom
+        label_rect.bottom = self.rect.bottom + 35
         return label, label_rect
 
     def handle_move(self):
         if self.destroyed:
             return
-        # print('Pirate move')
         self.get_another_direction()
         self.analyze_move(self.chosen_direction)
 
@@ -155,21 +185,36 @@ class PirateShip(pg.sprite.Sprite):
         target_unit = None
         for p in self.game.player_turn_manager.player_deque:
             for sh in p.ships:
-                if (sh.r, sh.c) == (target_r, target_c):
-                    target_unit =p.get_ship_by_xy(target_r, target_c)
-            # if (p.castle.r, p.castle.c) == (target_r, target_c):
-            #     target_units.append(p.castle)
+                if (sh.r, sh.c) == (self.r + 1, self.c):
+                    target_unit = p.get_ship_by_xy(self.r + 1, self.c)
+                if (sh.r, sh.c) == (self.r + 1, self.c + 1):
+                    target_unit = p.get_ship_by_xy(self.r + 1, self.c + 1)
+                if (sh.r, sh.c) == (self.r + 1, self.c - 1):
+                    target_unit = p.get_ship_by_xy(self.r + 1, self.c - 1)
+                if (sh.r, sh.c) == (self.r - 1, self.c):
+                    target_unit = p.get_ship_by_xy(self.r - 1, self.c)
+                if (sh.r, sh.c) == (self.r - 1, self.c + 1):
+                    target_unit = p.get_ship_by_xy(self.r - 1, self.c + 1)
+                if (sh.r, sh.c) == (self.r - 1, self.c - 1):
+                    target_unit = p.get_ship_by_xy(self.r - 1, self.c - 1)
+                if (sh.r, sh.c) == (self.r, self.c):
+                    target_unit = p.get_ship_by_xy(self.r, self.c)
+                if (sh.r, sh.c) == (self.r, self.c + 1):
+                    target_unit = p.get_ship_by_xy(self.r, self.c + 1)
+                if (sh.r, sh.c) == (self.r, self.c - 1):
+                    target_unit = p.get_ship_by_xy(self.r, self.c - 1)
 
         if target_unit is not None:
-            if mov_forced:
-                self.moves_left = 0
-                battle = Battle(self, target_unit)
-                battle.start()
-                return
-            else:
-                print('\nIf you really want to attack, press (Ctrl+KeyPad)')
-                print('After battle finishes, you will have no moves left.')
-                return
+            if target_unit.player != self.player and not target_unit.destroyed:
+                if mov_forced:
+                    self.moves_left = 0
+                    battle = Battle(self, target_unit)
+                    battle.start()
+                    return
+                else:
+                    print('If you really want to attack, press (Ctrl+KeyPad)')
+                    print('After battle finishes, you will have no moves left.')
+                    return
 
         if self.destroyed:
             print('Ship is dead.')

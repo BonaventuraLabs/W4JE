@@ -1,14 +1,15 @@
-import pygame as pg
+
 from src.utilities.settings import *
+
 
 
 class InputBox:
 
-    def __init__(self, x, y, w, h, screen):
+    def __init__(self, x, y, w, h, screen, tx):
         self.screen = screen
         self.rect = pg.Rect(x, y, w, h)
         self.color = pg.Color(COLOR_INACTIVE)
-        self.txt = 'Computer'
+        self.txt = tx
         self.txt_surface = FONT.render(self.txt, True, self.color)
         self.active = False
 
@@ -46,5 +47,6 @@ class InputBox:
         screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
         # Blit the rect.
         pg.draw.rect(screen, self.color, self.rect, 2)
+
 
 

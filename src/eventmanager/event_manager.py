@@ -31,15 +31,15 @@ class EventManager:
                     self.game.camera.handle_keys(event)
 
             # switch dragging on-off
-            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
                 self.game.mouse_drag = True
                 self.game.mouse_drag_xy = pg.mouse.get_pos()
 
-            elif event.type == pg.MOUSEBUTTONUP and event.button == 1:
+            elif event.type == pg.MOUSEBUTTONUP and event.button == 3:
                 self.game.mouse_drag = False
 
             # info click
-            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
+            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 click_xy_in_screen = pg.mouse.get_pos()
                 # to convert screen coordinates to map coordinates, we need to apply camera shift.
                 # shift the screen click coordinates by the Camera offset:

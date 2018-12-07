@@ -26,14 +26,11 @@ class Fish:
         self.rect = self.image.get_rect()
 
 
-class Animal:
-
-    name_list = ['Lisa', 'Mishka', 'Sobachka']
+class Landscape:
 
     def __init__(self, tile):
         self.game = tile.game
+        self.name = 'Landscape'
         self.tile = tile
-        self.image = np.random.choice(self.game.image_manager.animals_list)
-        self.name = np.random.choice(Animal.name_list)
+        self.image = np.random.choice(self.game.image_manager.landscape_list)
         self.rect = self.image.get_rect()
-

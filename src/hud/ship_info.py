@@ -8,8 +8,8 @@ class ShipInfo(pg.sprite.Sprite):
     def __init__(self, game, hud):
         self.game = game
         self.upperloc = 300
-        self.groups = hud.sprites_hud
-        pg.sprite.Sprite.__init__(self, self.groups)
+        #self.groups = hud.sprites_hud
+        #pg.sprite.Sprite.__init__(self, self.groups)
 
     def draw(self):
         cur_ship = self.game.player_turn_manager.current_ship
