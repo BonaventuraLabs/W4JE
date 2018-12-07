@@ -9,7 +9,7 @@ class ButtonEndTurn(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
 
         self.image = pg.Surface((120, 40))
-        self.image.fill((150, 50, 50))
+        self.image.fill((255,128,0))
         self.rect = self.image.get_rect()
         self.rect.center = (110, 750)
         self.id = 'end_turn_button'
@@ -24,5 +24,9 @@ class ButtonEndTurn(pg.sprite.Sprite):
         self.game.screen.blit(label, label_rect)
 
     def on_click(self):
-        self.game.player_turn_manager.end_turn()
+        print('Click')
+        self.game.player_turn_manager.current_ship.is_done = True
+        self.game.player_turn_manager.current_ship.is_current = False
+        self.game.player_turn_manager.current_ship.moves_left = 0
+
 

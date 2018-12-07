@@ -25,18 +25,19 @@ class Ship(pg.sprite.Sprite):
         self.player = player
         self.rank = rank
         if self.rank == 'Sloop':
-            self.max_crew = 30
+            self.max_crew = 40
             self.moves_per_turn = 16
             self.image = self.game.image_manager.sloop
         elif self.rank == 'Brigantine':
-            self.max_crew = 40
+            self.max_crew = 50
             self.moves_per_turn = 14
             self.image = self.game.image_manager.brigantine
         else:
-            self.max_crew = 50
+            self.max_crew = 60
             self.moves_per_turn = 12
             self.image = self.game.image_manager.frigate
         self.crew = self.max_crew
+        self.captured = False
         self.ships_nation = player.nation
         # English get longer move perk
         if self.ships_nation == 'English':
@@ -80,10 +81,9 @@ class Ship(pg.sprite.Sprite):
         self.attack = values.get(self.rank) * 10
         self.destroyed = False
 
-        self.items = []
         self.is_done = True
         self.is_current = False
-        #self.bar = self.get_bar()
+        self.moving_left = True
 
     def handle_keys(self, event):
         if event.key in Ship.keys_ship_move:
@@ -113,15 +113,9 @@ class Ship(pg.sprite.Sprite):
                 self.game.screen.blit(self.aura.image, self.game.camera.apply(self.aura))
             label, label_rect = self.get_name_label()
             self.game.screen.blit(label, self.game.camera.apply(label_rect))
-
-            #self.rect.center = self.xy
             bar, bar_rect = self.get_bar()
-            #bar_rect.x = self.xy[0] - 82
-            #bar_rect.y = self.xy[1] - 20
             self.game.screen.blit(bar, self.game.camera.apply(bar_rect))
-
             self.game.screen.blit(self.image, self.game.camera.apply(self))
-
         else:
             self.moves_left = 0
             self.moves_per_turn = 0
@@ -138,8 +132,6 @@ class Ship(pg.sprite.Sprite):
         pg.draw.rect(bar, self.player.color, fill_rect)
         pg.draw.rect(bar, WHITE, outline_rect, 1)
         bar_rect = bar.get_rect()
-        #bar_rect.x = self.xy[0] - 82
-        #bar_rect.y = self.xy[1] - 20
         bar_rect.centerx = self.rect.centerx - 24
         bar_rect.centery = self.rect.centery + 38
         #bar_rect.bottom = self.rect.bottom + 60
@@ -207,13 +199,20 @@ class Ship(pg.sprite.Sprite):
 
         # check if there are moves left:
         if self.moves_left <= 0:
-            self.status = '\n' + 'Ship is out of moves.'
+            self.status = 'Ship is out of moves.'
             return
 
         # movement direction:
         move_dir_dict = {pg.K_n: 'ld', pg.K_m: 'rd', pg.K_h: 'l',
                          pg.K_k: 'r', pg.K_u: 'lu', pg.K_i: 'ru'}
         cur_move = move_dir_dict[event.key]
+        if cur_move in ['ru', 'r', 'rd'] and self.moving_left:
+            self.image = pg.transform.flip(self.image, True, False)
+            self.moving_left = False
+        elif cur_move in ['lu', 'l', 'ld'] and not self.moving_left:
+            self.image = pg.transform.flip(self.image, True, False)
+            self.moving_left = True
+
 
         # get wind penalty:
         self.move_penalty = self.game.atmosphere.wind.ship_movement_penalty_dict[cur_move]
@@ -232,7 +231,7 @@ class Ship(pg.sprite.Sprite):
             if mov_forced:
                 self.move_penalty = -self.moves_per_turn
             else:
-                self.status = '\nNo wind... You can spend your actions on something else, or move for 1 tile only (Ctrl+KeyPad).'
+                self.status = 'No wind... You can spend your actions on something else, or move for 1 tile only (Ctrl+KeyPad).'
                 return
 
         # get the desired r, c
@@ -249,29 +248,24 @@ class Ship(pg.sprite.Sprite):
             #     target_units.append(p.castle)
 
         if target_unit is not None:
-            if mov_forced:
+            if mov_forced and target_unit.player != self.player:
                 #self.moves_left = 0 # no need to stop the shooting ship
                 battle = Battle(self, target_unit)
                 battle.start()
                 self.attack = values.get(self.rank) * 10
                 # take a chance to capture target ship
                 if target_unit.destroyed:
-                    c = random.randint(1, 20)
-                    print('Random should be more than 10 to capture' + str(c))
-                    if self.ships_nation == 'Spanish':
-                        c += 1
-                    if c > 18:
+                    if target_unit.captured:
                         self.status = 'Juppiiiii! Enemy ship is captured!'
+                        print('Juppiiiii!' + self.ships_nation + 'captured enemy ship!')
                         captured_ship = Ship(self.game, self.player, target_r, target_c, target_unit.rank)
                         captured_ship.crew = 0
                         captured_ship.load = target_unit.load
                         self.player.ships.append(captured_ship)
-                        # Todo probably all leftovers of ship_capt should be removed
-                        #target_unit.image = self.game.image_manager.ship_capt
                 return
             else:
-                self.status = 'If you really want to attack, press (Ctrl+KeyPad)\n'
-                self.status = 'After battle finishes, you will have no moves left.'
+                self.status = 'If you really want to attack, press (Ctrl+KeyPad)'
+                #self.status = 'After battle finishes, you will have no moves left.'
                 return
 
         if self.destroyed:
@@ -280,7 +274,7 @@ class Ship(pg.sprite.Sprite):
 
         # If survived: see, if target tile is allowed (if sea)
         target_tile = self.game.map.get_tile_by_rc(target_r, target_c)
-        # print('targeted tile: ' + target_tile.__str__())
+
 
         if target_tile is None:
             self.status = 'Tile does not exist.'
@@ -359,15 +353,12 @@ class Ship(pg.sprite.Sprite):
         # check if touched own village
         for v in self.player.villages:
             if v.r == self.r and v.c == self.c:
-                print('Control 2')
                 # control if 4 turns passed since last gold pickup.
                 t = self.game.player_turn_manager.global_turn_count
                 print('turn ' + str(t))
                 if (self.load_turn + 16) < t:
-                    print('Control 3')
                     # prevent players to stay by the village and keep picking up gold if load is 2 times more than capacity
                     if self.load <= values.get(self.rank) * 2:
-                        print('Control 4')
                         self.load += values.get(self.rank)
                         self.status = 'Gold load is: ' + str(self.load)
                         self.load_turn = t
@@ -390,9 +381,7 @@ class Ship(pg.sprite.Sprite):
             self.player.castle.gold += self.load
             self.load = 0
             self.status = 'You have now ' + str(self.player.castle.gold) + ' gold'
-            if self.player.castle.gold == GOLD_TO_WIN:
-                self.status = 'Player ' + str(self.player) + ' has won the game!'
-                # Here should be transfer to Game Over function.
+            self.game.win_check(self.player)
             self.show_my_port()
 
     def handle_collect(self):
@@ -411,7 +400,6 @@ class Ship(pg.sprite.Sprite):
             self.game.map.add_fish()
             item = cur_tile.remove_one_item()
             if item:
-                self.items.append(item)
                 luck = random.randint(1, 8)
                 print('Luck = ', luck)
                 if self.ships_nation == 'French':
@@ -427,11 +415,13 @@ class Ship(pg.sprite.Sprite):
                     else:
                         self.status = 'You could have lost 1 gold, but had nothing'
                 if luck == 3:
-                    self.attack -= 10
-                    self.status = 'Your attack decreased by 10 for one strike.'
+                    if self.attack > 0:
+                        self.attack -= 10
+                        self.status = 'Your attack decreased by 10 for one strike.'
                 if luck == 4:
-                    self.moves_left -= 3
-                    self.status = 'Your sailing path decreased by 3 for 1 turn!'
+                    if self.moves_left > 0:
+                        self.moves_left -= 3
+                        self.status = 'Your sailing path decreased by 3 for 1 turn!'
                 if luck == 5:
                     self.attack += 10
                     self.status = 'Your attack increased by 10 for one strike!'
@@ -451,9 +441,9 @@ class Ship(pg.sprite.Sprite):
     def make_destroyed(self):
         self.moves_left = 0
         self.moves_per_turn = 0
-        self.game.sprites_anim.add(Explosion(self.game, self.xy, self.rank))
-
-        self.image = self.game.image_manager.ship_wreck
+        if not self.captured:
+            self.game.sprites_anim.add(Explosion(self.game, self.xy, self.rank))
+            self.image = self.game.image_manager.ship_wreck
         self.destroyed = True
         self.is_done = True
         self.is_current = False
@@ -464,12 +454,6 @@ class Ship(pg.sprite.Sprite):
         print('Crew: ' + str(self.crew))
         print('Attack: ' + str(self.attack))
         print('Load: ' + str(self.load))
-        print('Items:')
-        if len(self.items) > 0:
-            for item in self.items:
-                print('  ' + item.name)
-        else:
-            print('None')
 
     def show_my_port(self):
         # # TODO: This needs to be re-worked to be controlled via buttons.
@@ -496,7 +480,7 @@ class Ship(pg.sprite.Sprite):
                             self.status = 'You do not have enough gold in the castle'
                             pg.display.flip()
                     if event.key == pg.K_2:
-                        if self.player.castle.gold >= 2:
+                        if self.player.castle.gold > 1:
                             self.player.ships.append(
                                 Ship(self.game, self.player, self.player.castle.r, self.player.castle.c, 'Brigantine'))
                             self.player.castle.gold -= 2
@@ -506,7 +490,7 @@ class Ship(pg.sprite.Sprite):
                             self.status = 'You do not have enough gold in the castle'
                             pg.display.flip()
                     if event.key == pg.K_3:
-                        if self.player.castle.gold >= 3:
+                        if self.player.castle.gold > 2:
                             self.player.ships.append(
                                 Ship(self.game, self.player, self.player.castle.r, self.player.castle.c, 'Frigate'))
                             self.player.castle.gold -= 3

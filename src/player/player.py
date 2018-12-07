@@ -36,22 +36,21 @@ class Player:
             vr1 = 45
             vc1 = 10
             vr2 = 46
-            vc2 = 32
-        elif row == 25:
-            if col == 4:
-                vr1 = 14
-                vc1 = 42
-                vr2 = 36
-                vc2 = 42
-            elif col == 45:
-                vr1 = 14
-                vc1 = 5
-                vr2 = 38
-                vc2 = 7
+            vc2 = 34
+        elif row == 25 and col == 4:
+            vr1 = 14
+            vc1 = 42
+            vr2 = 36
+            vc2 = 42
+        elif row == 25 and col == 45:
+            vr1 = 14
+            vc1 = 5
+            vr2 = 38
+            vc2 = 7
         else:
             vr1 = 5
-            vc1 = 10
-            vr2 = 5
+            vc1 = 11
+            vr2 = 3
             vc2 = 36
 
         self.villages = []

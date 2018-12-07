@@ -26,6 +26,13 @@ class Battle:
         if self.a_ship.crew <= 0:
             self.a_ship.make_destroyed()
         if self.d_ship.crew <= 0:
+            c = random.randint(1, 20)
+            print('Random should be more than 17 to capture. Random is ' + str(c))
+            if self.a_ship.ships_nation == 'Spanish':
+                c += 1
+                print('Spanish c: ' + str(c))
+            if c > 17:
+                self.d_ship.captured = True
             self.d_ship.make_destroyed()
 
     def start(self):

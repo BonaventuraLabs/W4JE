@@ -23,7 +23,10 @@ class Village(pg.sprite.Sprite):
         self.game.screen.blit(label, self.game.camera.apply(label_rect))
 
     def get_name_label(self):
-        text = self.player.name
+        if self.player.name == 'Computer':
+            text = self.player.nation
+        else:
+            text = self.player.name
         label = self.game.font.render(text, True, WHITE)
         label_rect = label.get_rect()
         label_rect.center = self.rect.center

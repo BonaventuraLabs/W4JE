@@ -1,4 +1,6 @@
 DEVELOPMENT ROADMAP
+
+DONE
 - Make port screen where player can buy new ships during his turn. DONE 06.11.2018.
 - Implement animation of sinking ship.DONE 07.11.2018
 - Improve hud info about current ship to show ship's image, current crew, load, shoot strength. DONE 08.11.2018
@@ -8,9 +10,18 @@ DEVELOPMENT ROADMAP
 - Implement start screen with options to select nation and number of real players, the rest will be AI.DONE 15.11.2018
 - Make perks depending on nation.This was not easy because enemy ship capture was introduced. DONE 17.11.2018
 - Improve battle machanics to show damage bar for each ship. DONE 18.11.2018
-- Make sure winning mechanism works for both win variants: destroy all enemy ships, bring to own port 7 gold. Make Win! screen with option to start again.
-- Improve start screen adding selection of win gold amount. Default 7, but should be changable up to 10.
+- Make sure winning mechanism works for situation: bring to own port 7 gold. Make Win! screen with option to start again. DONE 27.11.2018
+- Implement basic AI. DONE 28.11.2018
+- Make separate images of ships depending on sail direction and battle. DONE 29.11.2018
+- Make sure winning mechanism works for situation: destroy all enemy ships. DONE 30.11.2018
+- Improve start screen adding selection of win gold amount. Default 7, but should be changable up to 10. DONE 30.11.2018
+- Implement AI depending on nation.DONE 01.12.2018
+- Add working buttons on Start screen, Game and End screens. DONE 05.12.2018
+- Make captured ships not burn down. DONE 06.12.2018
+
+TO DO
+- Improve Win! screen with option to start again.
+- Make sure AI ships do not jump on each other.
 - Improve minimap to show current location of all ships, villages and ports with players colors.
-- Make separate images of ships depending on sail direction and battle. Also make animation of battle shots.
-- Implement AI depending on nation.
+- Make animation of battle shots.
 - Have professional graphics maker to draw: start screen, win screen, port screen, tiles, ships (small and big) including rotating images for each type of ships, sinking and shooting animations.

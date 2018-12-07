@@ -20,7 +20,7 @@ class Map:
         # simple map with circular sea in the middle:
         #self.tiles_dict = MapGenerator.generate_circle_map(game, self.sprites_map, MAP_TILE_H, MAP_TILE_W)
         # map from txt
-        self.tiles_dict = MapGenerator.generate_from_txt(game, self.sprites_map)
+        self.tiles_dict, self.tiles = MapGenerator.generate_from_txt(game, self.sprites_map)
         self.sea_tiles = []
 
         # randomly generated map:
