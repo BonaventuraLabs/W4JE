@@ -58,12 +58,11 @@ BRIGANTINEHUD = 'Brigantine.png'
 FRIGATEHUD = 'Frigate.png'
 PIRATE = 'image_pirate_1.png'
 SHIP_WRECK = 'image_ship_wreck_1.png'
-SHIP_CAPTURED = 'image_capt.png'
 SEAGULL = 'image_seagull_1.png'
 CASTLE = 'image_castle_1.png'
 VILLAGE = 'image_village_1.png'
 PORT = 'port.png'
-START = 'comb.jpg'
+START = 'Comb.jpg'
 
 EXPLOSION_1_9 = ['exp_', '.png']
 CLOUDS_1_6 = ['image_cloud_', '.png']
