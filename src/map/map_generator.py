@@ -1,21 +1,35 @@
 from src.utilities.settings import *
 from src.map.tile import Tile
 import numpy as np
-from skimage import filters, feature
-from skimage.morphology import erosion, selem
 import pygame as pg
-from os import path
+import os
 
 
 class MapGenerator:
 
     @staticmethod
+    def _require_scikit_image():
+        """Load optional random-map dependencies only when they are needed."""
+        try:
+            from skimage import feature, filters
+            from skimage.morphology import disk, erosion
+        except ImportError as exc:
+            raise RuntimeError(
+                "Random map generation requires the optional 'scikit-image' "
+                "package. Install it with: python -m pip install scikit-image"
+            ) from exc
+
+        return feature, filters, disk, erosion
+
+    @staticmethod
     def generate_circle_map(game, sprites_group, rows, columns):
         """Map with circular sea in the center."""
+        feature, _, disk, erosion = MapGenerator._require_scikit_image()
+
         ones = np.ones((rows, columns), dtype=np.uint8)
         ones[int(rows/2), int(columns/2)] = 0          # 0 pixel in the middle
-        se = selem.disk(int(min([rows, columns])/2))    # radius of se R = 1/3 of min(row,col)
-        ones = erosion(ones, selem=se)                  # expand (erode) the central 0 pixel to R
+        footprint = disk(int(min([rows, columns])/2))  # radius of disk
+        ones = erosion(ones, footprint=footprint)      # expand the central 0 pixel to R
 
         land_bool_map = ones > 0
         mountains_bool_map = MapGenerator.generate_mountains(rows, columns)
@@ -34,6 +48,7 @@ class MapGenerator:
 
     @staticmethod
     def generate_from_numpy(game, sprites_group, rows, columns):
+        feature, _, _, _ = MapGenerator._require_scikit_image()
 
         # Boolean maps (they are used for indexing numpy arrays.
         land_bool_map = MapGenerator.generate_land(rows, columns)
@@ -62,6 +77,8 @@ class MapGenerator:
 
     @staticmethod
     def generate_land(height, width):
+        _, filters, _, _ = MapGenerator._require_scikit_image()
+
         # generate land map
         # land=1,  the sea=0:
         zeros = np.zeros((height, width))
@@ -78,7 +95,7 @@ class MapGenerator:
         rows = height * np.random.random((1, n))
 
         # put these coordinates into the sea as 1s:
-        zeros[rows.astype(np.int), columns.astype(np.int)] = 1
+        zeros[rows.astype(int), columns.astype(int)] = 1
 
         # dilate them:
         # filter_sigma = w / (4. * n)
@@ -90,6 +107,8 @@ class MapGenerator:
 
     @staticmethod
     def generate_mountains(height, width):
+        _, filters, _, _ = MapGenerator._require_scikit_image()
+
         # TODO: repetitive functions. can be generalized.
         # generate mountains map.
         sea = np.zeros((height, width))
@@ -107,7 +126,7 @@ class MapGenerator:
         rows = height * np.random.random((1, n))
 
         # put these coordinates into the sea as 1s:
-        sea[rows.astype(np.int), columns.astype(np.int)] = 1
+        sea[rows.astype(int), columns.astype(int)] = 1
 
         # dilate them:
         filter_sigma = 2

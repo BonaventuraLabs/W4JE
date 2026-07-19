@@ -4,6 +4,7 @@ from src.player.explosion import Explosion
 from src.player.battle import Battle
 from src.player.aura import Aura
 from src.map.text import Text
+from src.map.hex_grid import get_neighbor
 import pygame as pg
 import random
 
@@ -294,53 +295,8 @@ class Ship(pg.sprite.Sprite):
         self.make_move(target_r, target_c)
 
     def calculate_target_rc(self, cur_move):
-        """
-        This function translates phenomenological description into coordinates.
-        This is needed because of the complex grid structure.
-        :param cur_move: movement descriptor 'lu' - left-up, 'rd' - right-down and so on.
-        :return: None
-        """
-        if cur_move == 'ld':
-            # left-down, ld.
-            if self.r % 2 == 0:
-                r = self.r + 1
-                c = self.c - 1
-            else:
-                r = self.r + 1
-                c = self.c
-        elif cur_move == 'rd':
-            # right-down, rd
-            if self.r % 2 == 0:
-                r = self.r + 1
-                c = self.c
-            else:
-                r = self.r + 1
-                c = self.c + 1
-        elif cur_move == 'l':
-            # left, l
-            r = self.r
-            c = self.c - 1
-        elif cur_move == 'r':
-            # right, r
-            r = self.r
-            c = self.c + 1
-        elif cur_move == 'lu':
-            # left up, lu
-            if self.r % 2 == 0:
-                r = self.r - 1
-                c = self.c - 1
-            else:
-                r = self.r - 1
-                c = self.c
-        elif cur_move == 'ru':
-            # rightup, ru
-            if self.r % 2 == 0:
-                r = self.r - 1
-                c = self.c
-            else:
-                r = self.r - 1
-                c = self.c + 1
-        return r, c
+        """Translate an existing movement direction into hex coordinates."""
+        return get_neighbor(self.r, self.c, cur_move)
 
     def make_move(self, target_r, target_c):
         # apply penalty

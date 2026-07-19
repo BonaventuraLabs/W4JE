@@ -1,0 +1,3 @@
+# Runtime dependencies for the standard text-map game.
+pygame>=2.5,<3
+numpy>=1.24,<2

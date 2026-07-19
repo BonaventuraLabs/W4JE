@@ -1,4 +1,1 @@
-import pygame as pg
-import numpy as np
-from src.utilities.settings import *
-
+"""Map package for W4JE."""
