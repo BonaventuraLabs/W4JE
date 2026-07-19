@@ -303,7 +303,10 @@ class AIship(pg.sprite.Sprite):
 
         # estimate if move is possible:
         if (self.moves_left + self.move_penalty) < 0:
-            pass
+            self.moves_left = 0
+            self.is_done = True
+            self.is_current = False
+            return
 
         self.make_move(target_r, target_c)
 
