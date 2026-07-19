@@ -150,7 +150,10 @@ class PlayerTurnManager:
                 if sh.rect.collidepoint(map_xy):
                     clicked_item = sh
                     clicked_item.on_click()
+                    break
+            if clicked_item is not None:
                 break
+
             #if player != Pirate:
             if player.color != BLACK:
                 if player.castle.rect.collidepoint(map_xy):
